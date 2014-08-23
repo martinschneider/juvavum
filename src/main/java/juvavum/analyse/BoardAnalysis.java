@@ -10,74 +10,32 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import juvavum.util.List;
-import juvavum.util.Timing;
 
-public abstract class Analyse {
+/**
+ * @author Martin Schneider
+ */
+public abstract class BoardAnalysis extends Analysis {
 
 	public List pos = new List();
 
-	private boolean misere;
-
 	private boolean symmetrien;
 
-	private int w;
-
-	private int h;
-
-	private Board b;
-
-	private Timing timer;
-
-	private boolean fileOutput;
-
-	private Game game;
-
-	final String FILENAME = "tmp.txt";
-
-	public Analyse(Game game, int h, int w, boolean misere, boolean symmetrien,
-			boolean fileOutput) {
+	public BoardAnalysis(Game game, int h, int w, boolean misere,
+			boolean symmetrien, boolean fileOutput) {
 		this(game, new Board(h, w), misere, symmetrien, fileOutput);
 	}
 
-	public Analyse(Game game, Board b, boolean misere, boolean symmetrien,
-			boolean fileOutput) {
-		this.game = game;
-		this.b = b;
-		this.misere = misere;
+	public BoardAnalysis(Game game, Board b, boolean misere,
+			boolean symmetrien, boolean fileOutput) {
+		super(game, b, misere, fileOutput);
 		this.symmetrien = symmetrien;
-		this.h = b.getHeight();
-		this.w = b.getWidth();
-		this.fileOutput = fileOutput;
-		if (fileOutput)
-			printHeaderToFile();
-
-		System.out.println("\n" + getGameName());
-
-		// Timer erzeugen und starten
-		timer = new Timing();
-		timer.begin();
-
-		// Spielfeld und Liste der Positionen erzeugen
 		pos = new List();
 		pos.add(new Position(b));
-
-		// Analyse starten
 		move(b, 0);
-
-		// Ergebnisse ausgeben
 		printResults();
-
 	}
 
 	abstract void move(Board b, int caller);
-
-	public boolean isMisere() {
-		return misere;
-	}
-
-	public void setMisere(boolean misere) {
-		this.misere = misere;
-	}
 
 	public boolean isSymmetrien() {
 		return symmetrien;
@@ -85,30 +43,6 @@ public abstract class Analyse {
 
 	public void setSymmetrien(boolean symmetrien) {
 		this.symmetrien = symmetrien;
-	}
-
-	public int getW() {
-		return w;
-	}
-
-	public void setW(int w) {
-		this.w = w;
-	}
-
-	public int getH() {
-		return h;
-	}
-
-	public void setH(int h) {
-		this.h = h;
-	}
-
-	public Board getB() {
-		return b;
-	}
-
-	public void setB(Board b) {
-		this.b = b;
 	}
 
 	public int findSymmetricPosition(Board b) {
@@ -153,17 +87,17 @@ public abstract class Analyse {
 		return foundPos;
 	}
 
-	private void printResults() {
+	void printResults() {
 		boolean sortChildren = false;
 		if (sortChildren) {
 			for (int i = 0; i < pos.getSize(); i++)
 				pos.get(i).sortChildren();
 		}
 		int grundyValue = 0;
-		if (misere)
-			grundyValue = pos.get(0).getGrundyMisere(fileOutput);
+		if (isMisere())
+			grundyValue = pos.get(0).getGrundyMisere(isFileOutput());
 		else
-			grundyValue = pos.get(0).getGrundy(fileOutput);
+			grundyValue = pos.get(0).getGrundy(isFileOutput());
 		System.out.print("The g-value of the starting position is "
 				+ grundyValue + ". The ");
 		if (grundyValue > 0)
@@ -181,14 +115,14 @@ public abstract class Analyse {
 			help += pos.get(i).directSuccCount();
 		double avgBranching = (double) help / pos.getSize();
 
-		timer.end();
-		String time = timer.getElapsedTimeString();
+		getTimer().end();
+		String time = getTimer().getElapsedTimeString();
 		System.out.println("Duration: " + time);
 
 		System.out.println("Average branching factor: "
 				+ Math.round(avgBranching * 100.) / 100. + "\n");
 
-		if (fileOutput) {
+		if (isFileOutput()) {
 			BufferedWriter out = null;
 			try {
 				out = new BufferedWriter(new OutputStreamWriter(
@@ -208,45 +142,17 @@ public abstract class Analyse {
 				System.out.println(e);
 			}
 			File file = new File(FILENAME);
-			if (!misere)
+			if (!isMisere())
 				file.renameTo(new File(getGameName() + ".txt"));
 			else
 				file.renameTo(new File(getGameName() + ".txt"));
 		}
 	}
 
-	private void printHeaderToFile() {
-		BufferedWriter out = null;
-		try {
-			out = new BufferedWriter(new OutputStreamWriter(
-					new FileOutputStream(FILENAME, true)));
-		} catch (FileNotFoundException e) {
-			System.out.println(e);
-		}
-		try {
-			Calendar cal = Calendar.getInstance();
-			SimpleDateFormat formater = new SimpleDateFormat();
-			out.write(formater.format(cal.getTime()));
-			out.newLine();
-			if (!misere)
-				out.write("Analysis of position " + b.flatten() + " of "
-						+ getGameName());
-			else
-				out.write("Analysis of position " + b.flatten() + " of "
-						+ getGameName());
-			out.newLine();
-			out.write("Pos.\tg-value");
-			out.newLine();
-			out.close();
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-	}
-
-	private String getGameName() {
+	String getGameName() {
 		String gameName;
-		gameName = game.name() + "[" + h + "x" + w;
-		if (misere)
+		gameName = getGame().name() + "[" + getH() + "x" + getW();
+		if (isMisere())
 			gameName = gameName + ", misere";
 		if (symmetrien)
 			gameName = gameName + ", symm";

@@ -1,5 +1,11 @@
 package juvavum.analyse;
 
+import juvavum.bliss.SimpleEdge;
+
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
+
 /**
  * Representation of a game board
  * 
@@ -28,7 +34,7 @@ public class Board {
 		this.board = new boolean[w][h];
 		this.h = h;
 		this.w = w;
-		fill();
+		empty();
 	}
 
 	/**
@@ -59,6 +65,30 @@ public class Board {
 				board[y][x] = true;
 			else
 				board[y][x] = false;
+			j++;
+		}
+	}
+
+	public Board(Graph<Integer, DefaultEdge> graph, int h, int w) {
+		this.h = h;
+		this.w = w;
+
+		int x = 0;
+		int y = 0;
+		this.board = new boolean[w][h];
+		fill();
+		int j = 0;
+		for (int i = 0; i < h * w; i++) {
+			x = j / w;
+			y = j % w;
+			if (graph.containsEdge(i, i + 1)) {
+				board[y][x] = false;
+				board[y + 1][x] = false;
+			}
+			if (graph.containsEdge(i, i + w)) {
+				board[y][x] = false;
+				board[y][x + 1] = false;
+			}
 			j++;
 		}
 	}
@@ -211,7 +241,8 @@ public class Board {
 	/**
 	 * Return binary representation of a number
 	 * 
-	 * @param number numberl
+	 * @param number
+	 *            numberl
 	 * @return binary representation of number
 	 */
 	private String decimalToBinary(long number) {
@@ -228,10 +259,21 @@ public class Board {
 	/**
 	 * initialize the board (all fields are empty)
 	 */
-	public void fill() {
+	public void empty() {
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board[i].length; j++) {
 				board[i][j] = false;
+			}
+		}
+	}
+
+	/**
+	 * initialize the board (all fields are empty)
+	 */
+	public void fill() {
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				board[i][j] = true;
 			}
 		}
 	}
@@ -253,7 +295,6 @@ public class Board {
 					z[i - 1]++;
 				else
 					bz[i - 1] += Math.pow(2, j - 1);
-
 			}
 		}
 		for (int j = 1; j <= w; j++) {
@@ -264,7 +305,6 @@ public class Board {
 					s[j - 1]++;
 				else
 					bs[j - 1] += Math.pow(2, i - 1);
-
 			}
 		}
 		sortRows(z, bz);
@@ -327,7 +367,6 @@ public class Board {
 		for (int xi = 0; xi < dx; xi++) {
 			for (int yi = 0; yi < dy / 2; yi++) {
 				help = board[yi][xi];
-
 				board[yi][xi] = board[dy - 1 - yi][xi];
 				board[dy - 1 - yi][xi] = help;
 			}
@@ -417,6 +456,28 @@ public class Board {
 			}
 		}
 		return this;
+	}
+
+	public Graph<Integer, SimpleEdge> toGraph() {
+		Graph<Integer, SimpleEdge> graph = new SimpleGraph<Integer, SimpleEdge>(
+				SimpleEdge.class);
+		int length = h * w;
+		int x, y;
+		for (int i = 0; i < length; i++) {
+			x = i / w + 1;
+			y = i % w + 1;
+			if (isFree(y, x) && isFree(y, x + 1)) {
+				graph.addVertex(i);
+				graph.addVertex(i + w);
+				graph.addEdge(i, i + w);
+			}
+			if (isFree(y, x) && isFree(y + 1, x)) {
+				graph.addVertex(i);
+				graph.addVertex(i + 1);
+				graph.addEdge(i, i + 1);
+			}
+		}
+		return graph;
 	}
 
 	/**

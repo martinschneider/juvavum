@@ -6,7 +6,7 @@ import java.util.Vector;
 /**
  * @author Martin Schneider
  */
-public class LinearCramAnalyse {
+public class LinearCramAnalysis {
 
 	private static int[] gValues;
 	

@@ -1,8 +1,6 @@
 package juvavum.util;
 
 /**
- * Klasse für Zeitmessungen
- * 
  * @author Martin Schneider
  */
 public class Timing {

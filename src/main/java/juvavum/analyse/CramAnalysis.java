@@ -3,14 +3,14 @@ package juvavum.analyse;
 /**
  * @author Martin Schneider
  */
-public class CramAnalyse extends Analyse{
+public class CramAnalysis extends BoardAnalysis{
 
-	public CramAnalyse(int h, int w, boolean misere, boolean symmetrien,
+	public CramAnalysis(int h, int w, boolean misere, boolean symmetrien,
 			boolean fileOutput) {
 		super(Game.CRAM, h, w, misere, symmetrien, fileOutput);
 	}
 
-	public CramAnalyse(Board b, boolean misere, boolean symmetrien,
+	public CramAnalysis(Board b, boolean misere, boolean symmetrien,
 			boolean fileOutput) {
 		super(Game.CRAM, b, misere, symmetrien, fileOutput);
 	}

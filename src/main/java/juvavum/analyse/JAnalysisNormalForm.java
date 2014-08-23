@@ -3,14 +3,14 @@ package juvavum.analyse;
 /**
  * @author Martin Schneider
  */
-public class JAnalyseNormalForm extends Analyse {
+public class JAnalysisNormalForm extends BoardAnalysis {
 
-	public JAnalyseNormalForm(int h, int w, boolean misere, boolean symmetrien,
+	public JAnalysisNormalForm(int h, int w, boolean misere, boolean symmetrien,
 			boolean fileOutput) {
 		super(Game.JUV, h, w, misere, symmetrien, fileOutput);
 	}
 
-	public JAnalyseNormalForm(Board b, boolean misere, boolean symmetrien,
+	public JAnalysisNormalForm(Board b, boolean misere, boolean symmetrien,
 			boolean fileOutput) {
 		super(Game.JUV, b, misere, symmetrien, fileOutput);
 	}

@@ -3,16 +3,16 @@ package juvavum.analyse;
 /**
  * @author Martin Schneider
  */
-public class JAnalyse extends Analyse {
+public class DJAnalysis extends BoardAnalysis {
 
-	public JAnalyse(int h, int w, boolean misere, boolean symmetrien,
+	public DJAnalysis(int h, int w, boolean misere, boolean symmetrien,
 			boolean fileOutput) {
-		super(Game.JUV, h, w, misere, symmetrien, fileOutput);
+		super(Game.DJUV, h, w, misere, symmetrien, fileOutput);
 	}
 
-	public JAnalyse(Board b, boolean misere, boolean symmetrien,
+	public DJAnalysis(Board b, boolean misere, boolean symmetrien,
 			boolean fileOutput) {
-		super(Game.JUV, b, misere, symmetrien, fileOutput);
+		super(Game.DJUV, b, misere, symmetrien, fileOutput);
 	}
 
 	void move(Board b, int caller) {
@@ -28,9 +28,10 @@ public class JAnalyse extends Analyse {
 		i = j = 1;
 		while (i <= b.getWidth()) {
 			j = 1;
-			while (j <= b.getHeight()) {
-				if (b.isFree(i, j)) {
+			while (j + 1 <= b.getHeight()) {
+				if (b.isFree(i, j) && b.isFree(i, j + 1)) {
 					b.set(i, j);
+					b.set(i, j + 1);
 					foundPos = pos.search(b.flatten());
 					tmp = new Position(b);
 					if (isSymmetrien() && foundPos == -1) {
@@ -49,7 +50,9 @@ public class JAnalyse extends Analyse {
 							pos.get(caller).addChild(pos.get(foundPos));
 						moveCurrentColumn(b, caller, i);
 					}
+
 					b.clear(i, j);
+					b.clear(i, j + 1);
 				}
 				j++;
 			}
@@ -66,9 +69,10 @@ public class JAnalyse extends Analyse {
 		j = 1;
 		while (j <= b.getHeight()) {
 			i = 1;
-			while (i <= b.getWidth()) {
-				if (b.isFree(i, j)) {
+			while (i + 1 <= b.getWidth()) {
+				if (b.isFree(i, j) && b.isFree(i + 1, j)) {
 					b.set(i, j);
+					b.set(i + 1, j);
 					foundPos = pos.search(b.flatten());
 					tmp = new Position(b);
 					if (isSymmetrien() && foundPos == -1) {
@@ -88,6 +92,7 @@ public class JAnalyse extends Analyse {
 						moveCurrentRow(b, caller, j);
 					}
 					b.clear(i, j);
+					b.clear(i + 1, j);
 				}
 				i++;
 			}
@@ -100,9 +105,10 @@ public class JAnalyse extends Analyse {
 		int j = 0;
 		int foundPos = -1;
 		int posNr = 0;
-		while (j <= b.getHeight()) {
-			if (b.isFree(colNr, j)) {
+		while (j + 1 <= b.getHeight()) {
+			if (b.isFree(colNr, j) && (b.isFree(colNr, j + 1))) {
 				b.set(colNr, j);
+				b.set(colNr, j + 1);
 				tmp = new Position(b);
 				foundPos = pos.search(b.flatten());
 				if (isSymmetrien() && foundPos == -1) {
@@ -122,6 +128,7 @@ public class JAnalyse extends Analyse {
 					moveCurrentColumn(b, caller, colNr);
 				}
 				b.clear(colNr, j);
+				b.clear(colNr, j + 1);
 			}
 			j++;
 		}
@@ -132,9 +139,10 @@ public class JAnalyse extends Analyse {
 		int posNr = 0;
 		int foundPos = -1;
 		Position tmp = null;
-		while (j <= b.getWidth()) {
-			if (b.isFree(j, rowNr)) {
+		while (j + 1 <= b.getWidth()) {
+			if (b.isFree(j, rowNr) && b.isFree(j + 1, rowNr)) {
 				b.set(j, rowNr);
+				b.set(j + 1, rowNr);
 				foundPos = pos.search(b.flatten());
 				tmp = new Position(b);
 				if (isSymmetrien() && foundPos == -1) {
@@ -152,7 +160,9 @@ public class JAnalyse extends Analyse {
 						pos.get(caller).addChild(pos.get(foundPos));
 					moveCurrentRow(b, caller, rowNr);
 				}
+
 				b.clear(j, rowNr);
+				b.clear(j + 1, rowNr);
 			}
 			j++;
 		}

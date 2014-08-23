@@ -17,6 +17,8 @@ public class Start {
 		Options options = new Options();
 		options.addOption("g", "game", true,
 				"Game type (Juvavum, Domino Juvavum, Cram), default: Juvavum");
+		options.addOption("G", "graph-analysis", false,
+				"Use graph based analysis (Cram only)");
 		Option heightOption = new Option("h", "height", true,
 				"Height of the game board");
 		heightOption.setRequired(true);
@@ -26,6 +28,7 @@ public class Start {
 		widthOption.setRequired(true);
 		options.addOption(widthOption);
 		options.addOption("s", "symmetries", false, "Use symmetries");
+		options.addOption("i", "isomorphisms", false, "Use isomorphisms");
 		options.addOption("n", "normalforms", false,
 				"Use normal forms (Juvavum only)");
 		options.addOption("m", "misere", false, "Misere type game");
@@ -54,22 +57,31 @@ public class Start {
 		boolean fileOutput = (cmd.hasOption('f') ? true : false);
 		boolean symmetries = (cmd.hasOption('s') ? true : false);
 		boolean normalForms = (cmd.hasOption('n') ? true : false);
+		boolean graphedBased = (cmd.hasOption('G') ? true : false);
+		boolean isomorphisms = (cmd.hasOption('i') ? true : false);
 
 		if (cmd.hasOption('g')) {
 			switch (cmd.getOptionValue('g').toLowerCase()
 					.replaceAll("\\s+", "")) {
 			case "juvavum":
 				if (normalForms) {
-					new JAnalyseNormalForm(h, w, misere, true, fileOutput);
+					new JAnalysisNormalForm(h, w, misere, true, fileOutput);
 				} else {
-					new JAnalyse(h, w, misere, symmetries, fileOutput);
+					new JAnalysis(h, w, misere, symmetries, fileOutput);
 				}
 				break;
 			case "dominojuvavum":
-				new DJAnalyse(h, w, misere, symmetries, fileOutput);
+				new DJAnalysis(h, w, misere, symmetries, fileOutput);
 				break;
 			case "cram":
-				new CramAnalyse(h, w, misere, symmetries, fileOutput);
+				if (graphedBased)
+				{
+					new GraphCramAnalysis(h, w, misere, isomorphisms, fileOutput);
+				}
+				else
+				{
+					new CramAnalysis(h, w, misere, symmetries, fileOutput);
+				}
 				break;
 			default:
 				System.out.println("Unknown game type: "
@@ -78,9 +90,9 @@ public class Start {
 			}
 		} else {
 			if (normalForms) {
-				new JAnalyseNormalForm(h, w, misere, true, fileOutput);
+				new JAnalysisNormalForm(h, w, misere, true, fileOutput);
 			} else {
-				new JAnalyse(h, w, misere, symmetries, fileOutput);
+				new JAnalysis(h, w, misere, symmetries, fileOutput);
 			}
 		}
 	}
