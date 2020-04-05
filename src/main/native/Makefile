@@ -2,13 +2,8 @@
 # Modify these two flags according to your system
 #
 # The directory where jni.h is to be found
-#JNI_H_PATH = /usr/lib/j2sdk1.5-sun/include
-JNI_H_PATH = /System/Library/Frameworks/JavaVM.framework/Headers
-#JNI_H_PATH = /usr/lib/jvm/java-6-sun-1.6.0.17/include/
-# Where jni_md.h is to be found
-JNI_MD_H_PATH = /usr/lib/j2sdk1.5-sun/include/linux
-#JNI_MD_H_PATH = /usr/lib/jvm/java-6-sun-1.6.0.17/include/linux
-
+JNI_H_PATH = /Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/include
+JNI_MD_H_PATH = /Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/include/darwin
 
 JNI_INCLUDE = -I$(JNI_H_PATH) -I$(JNI_MD_H_PATH)
 
@@ -27,9 +22,7 @@ BLISS_CCFLAGS = -O3 -Wall --pedantic -fPIC
 
 # The wrapper sources, objects, and compiler options
 WRAPPER_DIR = ./wrapper
-#WRAPPER_SRCS += $(WRAPPER_DIR)/jbliss_AbstractGraph.cc
-WRAPPER_SRCS += $(WRAPPER_DIR)/juvavum_bliss_BlissGraph.cc
-#WRAPPER_SRCS += $(WRAPPER_DIR)/jbliss_Digraph.cc
+WRAPPER_SRCS += $(WRAPPER_DIR)/juvavum_graph_BlissGraph.cc
 WRAPPER_OBJS = $(addsuffix .o, $(basename $(WRAPPER_SRCS)))
 WRAPPER_CC = g++
 WRAPPER_CCFLAGS = -O3 -Wall -fPIC
@@ -59,7 +52,7 @@ bliss: ./bliss-0.50.zip
 	unzip bliss-0.50.zip
 
 headers: $(JAVA_CLASSFILES)
-	javah -jni -d $(WRAPPER_DIR) $(CLASSPATHOPT) juvavum.bliss.BlissGraph
+	javac -h . ../java/juvavum/graph/BlissGraph.java
 
 lib: bliss $(BLISS_OBJS) headers $(WRAPPER_OBJS)
 	$(WRAPPER_CC) $(JNI_INCLUDE) -I$(BLISS_DIR) -shared -o ../../../target/libjbliss.jnilib $(BLISS_OBJS) $(WRAPPER_OBJS) $(LIBS)

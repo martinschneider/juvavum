@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <stdio.h>
 #include "graph.hh"
-#include "juvavum_bliss_BlissGraph.h"
+#include "juvavum_graph_BlissGraph.h"
 
 static bliss::Graph *_j2c(const jlong j_ptr)
 {
@@ -17,7 +17,7 @@ static jlong _c2j(bliss::Graph * const c_ptr)
 }
 
 
-JNIEXPORT jlong JNICALL Java_juvavum_bliss_BlissGraph_create
+JNIEXPORT jlong JNICALL Java_juvavum_graph_BlissGraph_create
 (JNIEnv *env, jobject o)
 {
   bliss::Graph *graph = new bliss::Graph();
@@ -26,7 +26,7 @@ JNIEXPORT jlong JNICALL Java_juvavum_bliss_BlissGraph_create
 }
 
 
-JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph_destroy
+JNIEXPORT void JNICALL Java_juvavum_graph_BlissGraph_destroy
 (JNIEnv *env, jobject o, jlong true_bliss)
 {
   assert(true_bliss != 0);
@@ -36,7 +36,7 @@ JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph_destroy
 }
 
 
-JNIEXPORT jlong JNICALL Java_juvavum_bliss_BlissGraph__1read_1dimacs
+JNIEXPORT jlong JNICALL Java_juvavum_graph_BlissGraph__1read_1dimacs
 (JNIEnv *env, jclass c, jstring filename)
 {
   /* Convert string from Java to C representation */
@@ -64,7 +64,7 @@ JNIEXPORT jlong JNICALL Java_juvavum_bliss_BlissGraph__1read_1dimacs
 }
 
 
-JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph__1write_1dimacs
+JNIEXPORT void JNICALL Java_juvavum_graph_BlissGraph__1write_1dimacs
 (JNIEnv *env, jobject, jlong true_bliss, jstring filename)
 {
   assert(true_bliss != 0);
@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph__1write_1dimacs
 }
 
 
-JNIEXPORT jlong JNICALL Java_juvavum_bliss_BlissGraph__1permute
+JNIEXPORT jlong JNICALL Java_juvavum_graph_BlissGraph__1permute
   (JNIEnv *env, jobject, jlong true_bliss, jintArray j_perm)
 {
   assert(true_bliss != 0);
@@ -124,7 +124,7 @@ JNIEXPORT jlong JNICALL Java_juvavum_bliss_BlissGraph__1permute
 }
 
 
-JNIEXPORT jint JNICALL Java_juvavum_bliss_BlissGraph__1add_1vertex
+JNIEXPORT jint JNICALL Java_juvavum_graph_BlissGraph__1add_1vertex
 (JNIEnv *, jobject, jlong true_bliss, jint color)
 {
   assert(true_bliss != 0);
@@ -136,7 +136,7 @@ JNIEXPORT jint JNICALL Java_juvavum_bliss_BlissGraph__1add_1vertex
 }
 
 
-JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph__1add_1edge
+JNIEXPORT void JNICALL Java_juvavum_graph_BlissGraph__1add_1edge
 (JNIEnv *, jobject, jlong true_bliss, jint v1, jint v2)
 {
   assert(true_bliss != 0);
@@ -184,7 +184,7 @@ static void report_aut(void *param, unsigned int n, const unsigned int *aut)
 
 
 
-JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph__1find_1automorphisms
+JNIEXPORT void JNICALL Java_juvavum_graph_BlissGraph__1find_1automorphisms
 (JNIEnv *env, jobject caller, jlong true_bliss, jobject reporter)
 {
   assert(true_bliss != 0);
@@ -225,7 +225,7 @@ JNIEXPORT void JNICALL Java_juvavum_bliss_BlissGraph__1find_1automorphisms
 }
 
 
-JNIEXPORT jintArray JNICALL Java_juvavum_bliss_BlissGraph__1canonical_1labeling
+JNIEXPORT jintArray JNICALL Java_juvavum_graph_BlissGraph__1canonical_1labeling
 (JNIEnv *env, jobject caller, jlong true_bliss, jobject reporter)
 {
   assert(true_bliss != 0);

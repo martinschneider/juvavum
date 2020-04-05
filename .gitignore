@@ -1,4 +1,12 @@
 .DS_Store
+.classpath
+.project
+.settings/
+target/
+src/main/java/juvavum/graph/BlissGraph$Reporter.class
+src/main/java/juvavum/graph/BlissGraph$Vertex.class
+src/main/java/juvavum/graph/BlissGraph.class
+src/main/native/wrapper/juvavum_graph_BlissGraph.o
 src/main/native/bliss-0.50/bignum.hh
 src/main/native/bliss-0.50/bliss.cc
 src/main/native/bliss-0.50/bliss_C.cc
@@ -32,3 +40,4 @@ src/main/native/wrapper/juvavum_bliss_BlissGraph.h
 src/main/native/wrapper/juvavum_bliss_BlissGraph.o
 src/main/native/wrapper/juvavum_bliss_BlissGraph_Reporter.h
 src/main/native/wrapper/juvavum_bliss_BlissGraph_Vertex.h
+/target/
