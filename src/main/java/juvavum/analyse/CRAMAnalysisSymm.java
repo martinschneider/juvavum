@@ -15,7 +15,7 @@ public class CRAMAnalysisSymm extends CRAMAnalysis {
     super(b, misere);
   }
 
-  protected Map<Board, Position> positionMap = new HashMap<>();;
+  protected Map<Long, Position> positionMap = new HashMap<>();;
 
   @Override
   protected void addPosition(Board board, Set<Position> children) {
@@ -26,46 +26,46 @@ public class CRAMAnalysisSymm extends CRAMAnalysis {
       Board copy = new Board(board);
       pos = new Position(copy);
       children.add(pos);
-      positionMap.put(copy, pos);
+      positionMap.put(board.flatten(), pos);
     }
   }
 
   protected Position findPosition(Board board) {
-    Position found = positionMap.get(board);
+    Position found = positionMap.get(board.flatten());
     if (found == null) {
       board.flipud();
-      found = positionMap.get(board);
+      found = positionMap.get(board.flatten());
       board.flipud();
     }
     if (found == null) {
       board.fliplr();
-      found = positionMap.get(board);
+      found = positionMap.get(board.flatten());
       board.fliplr();
     }
     if (found == null) {
       board.rotate180();
-      found = positionMap.get(board);
+      found = positionMap.get(board.flatten());
       board.rotate180();
     }
     if (b.getHeight() == b.getWidth()) {
       if (found == null) {
         board.rotate90();
-        found = positionMap.get(board);
+        found = positionMap.get(board.flatten());
         board.rotate270();
       }
       if (found == null) {
         board.rotate270();
-        found = positionMap.get(board);
+        found = positionMap.get(board.flatten());
         board.rotate90();
       }
       if (found == null) {
         board.flipd1();
-        found = positionMap.get(board);
+        found = positionMap.get(board.flatten());
         board.flipd1();
       }
       if (found == null) {
         board.flipd2();
-        found = positionMap.get(board);
+        found = positionMap.get(board.flatten());
         board.flipd2();
       }
     }

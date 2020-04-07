@@ -395,8 +395,8 @@ public class Board {
     return this;
   }
 
-  public Graph<Integer, SimpleEdge> toGraph() {
-    Graph<Integer, SimpleEdge> graph = new SimpleGraph<>(SimpleEdge.class);
+  public SimpleGraph<Integer, SimpleEdge> toGraph() {
+    SimpleGraph<Integer, SimpleEdge> graph = new SimpleGraph<>(SimpleEdge.class);
     int length = h * w;
     int x, y;
     for (int i = 0; i < length; i++) {

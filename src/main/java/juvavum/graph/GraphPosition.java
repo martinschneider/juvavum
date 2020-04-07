@@ -12,12 +12,12 @@ public class GraphPosition extends Position {
   private List<Graph<Integer, SimpleEdge>> components = new ArrayList<>();
   private Set<GraphPosition> children = new HashSet<>();
 
-  public GraphPosition(
-      Graph<Integer, SimpleEdge> graph, boolean splitIntoComponents, boolean isomorphisms) {
+  public GraphPosition(Graph<Integer, SimpleEdge> graph, boolean splitIntoComponents,
+      boolean isomorphisms) {
     super();
     if (splitIntoComponents) {
-      for (Graph<Integer, SimpleEdge> component :
-          new BiconnectivityInspector<Integer, SimpleEdge>(graph).getConnectedComponents()) {
+      for (Graph<Integer, SimpleEdge> component : new BiconnectivityInspector<Integer, SimpleEdge>(
+          graph).getConnectedComponents()) {
         if (component.vertexSet().size() > 1) {
           components.add((isomorphisms) ? GraphUtils.toCanonicalForm(component) : component);
         }

@@ -15,9 +15,10 @@
   </developers>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.7</java.version>
+    <java.version>1.8</java.version>
     <commons.cli.version>1.4</commons.cli.version>
     <jgrapht.version>1.4.0</jgrapht.version>
+    <mapdb.version>3.0.8</mapdb.version>
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
     <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
     <maven.dependency.plugin.version>3.1.2</maven.dependency.plugin.version>
@@ -33,6 +34,16 @@
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
       <version>${jgrapht.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-io</artifactId>
+      <version>${jgrapht.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mapdb</groupId>
+      <artifactId>mapdb</artifactId>
+      <version>${mapdb.version}</version>
     </dependency>
   </dependencies>
   <build>

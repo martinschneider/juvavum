@@ -2,6 +2,7 @@ package juvavum.analyse;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import juvavum.graph.DBCramAnalysis;
 import juvavum.graph.GraphCramAnalysis;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -35,6 +36,8 @@ public class Start {
     options.addOption("m", "misere", false, "Misere type game");
     options.addOption("c", "components", false,
         "Break game into components and use the Grundy-Sprague theorem for sums of games");
+    options.addOption("d", "database", false,
+        "Store results in a local MapDB (only for CRAM, uses Graph-based analysis with isomorphisms and components)");
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = null;
@@ -59,9 +62,16 @@ public class Start {
     boolean symmetries = (cmd.hasOption('s') ? true : false);
     boolean isomorphisms = (cmd.hasOption('i') ? true : false);
     boolean components = (cmd.hasOption('c') ? true : false);
+    boolean database = (cmd.hasOption('d') ? true : false);
 
     String game = cmd.getOptionValue('g').toLowerCase().replaceAll("\\s+", "");
-    if (cmd.hasOption('G') && !game.equals("cram")) {
+    if (game.equals("juv")) {
+      game = "juvavum";
+    }
+    if (game.equals("djuv")) {
+      game = "dominojuvavum";
+    }
+    if (graphBased && !game.equals("cram")) {
       exitWithError("Graph analysis is only available for game type Cram (-g cram)");
     }
     if (isomorphisms && !graphBased) {
@@ -74,17 +84,19 @@ public class Start {
       exitWithError(
           "Components can only be considered for the normal form of Cram, not for misere (the sum theorem does not apply)");
     }
-    if (components && !graphBased) {
-      exitWithError("Normal forms can only be considered for game type Juvavum (-g juvavum)");
-    }
     if (symmetries && graphBased) {
       exitWithError(
           "Symmetries can not be considered for graph-based analysis. Use isomorphisms (-i) and/or components (-c) instead.");
     }
+    if (database && !game.equals("cram")) {
+      exitWithError("Database export is only supported for Cram (-g cram)");
+    }
+    if (normalForms && !game.equals("juvavum")) {
+      exitWithError("Normal forms can only be considered for game type Juvavum (-g juvavum)");
+    }
 
     if (cmd.hasOption('g')) {
       switch (game) {
-        case "juv":
         case "juvavum":
           if (normalForms) {
             new JUVAnalysisNormalForm(new Board(h, w), misere).analyse();
@@ -94,7 +106,6 @@ public class Start {
             new JUVAnalysis(new Board(h, w), misere).analyse();
           }
           break;
-        case "djuv":
         case "dominojuvavum":
           if (symmetries) {
             new DJUVAnalysisSymm(new Board(h, w), misere).analyse();
@@ -103,6 +114,10 @@ public class Start {
           }
           break;
         case "cram":
+          if (database) {
+            new DBCramAnalysis(new Board(h, w), misere).analyse();
+            break;
+          }
           if (!misere && !symmetries && !graphBased && (h == 1 || w == 1)) {
             new LCRAMAnalysis(h, w).analyse();
             break;

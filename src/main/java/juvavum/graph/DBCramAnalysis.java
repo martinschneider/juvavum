@@ -1,6 +1,5 @@
 package juvavum.graph;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -10,35 +9,41 @@ import juvavum.analyse.ResultsPrinter;
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 
-/** @author Martin Schneider, mart.schneider@gmail.com */
-public class GraphCramAnalysis extends ResultsPrinter {
-  private boolean isomorphisms;
-  private boolean splitIntoComponents;
+/**
+ * Analysis which stores results in a MapDB file.
+ * 
+ * @author Martin Schneider, mart.schneider@gmail.com
+ */
+public class DBCramAnalysis extends ResultsPrinter {
 
   private Graph<Integer, SimpleEdge> graph;
-  private Map<Graph<Integer, SimpleEdge>, Integer> grundyMap = new HashMap<>();
+  private Map<Graph<Integer, SimpleEdge>, Integer> grundyMap;
+  private DB db;
 
-  public GraphCramAnalysis(Board b, boolean misere, boolean isomorphisms,
-      boolean splitIntoComponents) {
+  public DBCramAnalysis(Board b, boolean misere) {
     super(Game.CRAM, b, misere);
     System.out.println("\n" + getGameName());
-    if (misere && splitIntoComponents) {
-      System.out.println("Cannot use sum theorem for misere games, fall-back to full analysis.");
-      splitIntoComponents = false;
-    }
     this.graph = b.toGraph();
-    this.isomorphisms = isomorphisms;
-    this.splitIntoComponents = splitIntoComponents;
+    db = DBMaker.fileDB("cram.db").make();
+    String mapName = (misere) ? "misere" : "normal";
+    grundyMap = db.hashMap(mapName, new GraphSerializer(), Serializer.INTEGER).createOrOpen();
   }
 
   public void analyse() {
     timer.start();
-    printResults(grundy());
+    try {
+      printResults(grundy());
+    } finally {
+      db.close();
+    }
   }
 
   private int grundy() {
-    return grundy(new GraphPosition(this.graph, splitIntoComponents, isomorphisms));
+    return grundy(new GraphPosition(this.graph, false, false));
   }
 
   private int grundy(GraphPosition position) {
@@ -50,13 +55,13 @@ public class GraphCramAnalysis extends ResultsPrinter {
   }
 
   private int grundy(Graph<Integer, SimpleEdge> graph) {
-    Integer gValue = grundyMap.get(graph);
+    Integer gValue = grundyMap.get(GraphUtils.toCanonicalForm(graph));
     if (gValue != null) {
       return gValue;
     }
     if (graph.edgeSet().isEmpty()) {
       gValue = (misere) ? 1 : 0;
-      grundyMap.put(graph, gValue);
+      grundyMap.put(GraphUtils.toCanonicalForm(graph), gValue);
       return gValue;
     }
     Set<GraphPosition> children = new HashSet<>();
@@ -66,13 +71,10 @@ public class GraphCramAnalysis extends ResultsPrinter {
       child.removeEdge(graph.getEdgeSource(edge), graph.getEdgeTarget(edge));
       child.removeVertex(graph.getEdgeSource(edge));
       child.removeVertex(graph.getEdgeTarget(edge));
-      if (isomorphisms) {
-        child = GraphUtils.toCanonicalForm(child);
-      }
-      children.add(new GraphPosition(child, splitIntoComponents, isomorphisms));
+      children.add(new GraphPosition(child, false, false));
     }
     gValue = mex(children);
-    grundyMap.put(graph, gValue);
+    grundyMap.put(GraphUtils.toCanonicalForm(graph), gValue);
     return gValue;
   }
 
@@ -97,7 +99,23 @@ public class GraphCramAnalysis extends ResultsPrinter {
   }
 
   @Override
+  protected void printResults(int grundyValue) {
+    System.out.print("The g-value of the starting position is " + grundyValue + ". The ");
+    if (grundyValue > 0) {
+      System.out.print("first ");
+    } else {
+      System.out.print("second ");
+    }
+    System.out.println("player can always win.");
+
+    timer.stop();
+    String time = timer.getElapsedTimeString();
+    System.out.println("Duration: " + time);
+  }
+
+  @Override
   protected int numberOfPositions() {
-    return grundyMap.size();
+    return -1;
   }
 }
+

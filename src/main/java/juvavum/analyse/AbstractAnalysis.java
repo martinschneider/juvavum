@@ -8,7 +8,7 @@ import java.util.Set;
 /** @author Martin Schneider, mart.schneider@gmail.com */
 public abstract class AbstractAnalysis extends ResultsPrinter {
 
-  protected Map<Board, Integer> grundyMap = new HashMap<>();
+  protected Map<Long, Integer> grundyMap = new HashMap<>();
 
   public AbstractAnalysis(Game game, Board b, boolean misere) {
     super(game, b, misere);
@@ -26,7 +26,7 @@ public abstract class AbstractAnalysis extends ResultsPrinter {
 
   protected int grundy(Position position) {
     Board board = position.getBoard();
-    Integer gValue = grundyMap.get(board);
+    Integer gValue = grundyMap.get(board.flatten());
     if (gValue != null) {
       return gValue;
     }
@@ -34,11 +34,11 @@ public abstract class AbstractAnalysis extends ResultsPrinter {
     addChildren(board, children);
     if (children.isEmpty()) {
       gValue = (misere) ? 1 : 0;
-      grundyMap.put(board, gValue);
+      grundyMap.put(board.flatten(), gValue);
       return gValue;
     }
     gValue = mex(children);
-    grundyMap.put(board, gValue);
+    grundyMap.put(board.flatten(), gValue);
     return gValue;
   }
 
