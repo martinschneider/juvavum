@@ -13,6 +13,16 @@
       <url>https://github.com/martinschneider/juvavum</url>
     </developer>
   </developers>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.7</java.version>
@@ -22,6 +32,7 @@
     <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
     <maven.dependency.plugin.version>3.1.2</maven.dependency.plugin.version>
     <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
+    <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -106,4 +117,27 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>sign</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${maven.gpg.plugin.version}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
