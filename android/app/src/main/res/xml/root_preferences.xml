@@ -1,0 +1,50 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Game settings">
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/gameArray"
+            android:entryValues="@array/gameValues"
+            android:key="gameType"
+            android:summary="Current value: %s"
+            android:title="Game type" />
+        <ListPreference
+            android:defaultValue="7"
+            android:entries="@array/sizeArray"
+            android:entryValues="@array/sizeArray"
+            android:key="width"
+            android:summary="Current value: %s"
+            android:title="Width of the game board" />
+        <ListPreference
+            android:defaultValue="5"
+            android:entries="@array/sizeArray"
+            android:entryValues="@array/sizeArray"
+            android:key="height"
+            android:summary="Current value: %s"
+            android:title="Height of the game board" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="misere"
+            android:summary="In the misère form the last player to move loses"
+            android:title="Misère form" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="humanStarts"
+            android:summary="If this is off the computer will make the first move"
+            android:title="You move first" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="prefill"
+            android:summary="25% of fields are pre-filled"
+            android:title="Random start position" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Audio settings">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="sounds"
+            android:title="Sound effects" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="music"
+            android:title="Background music" />
+    </PreferenceCategory>
+</PreferenceScreen>

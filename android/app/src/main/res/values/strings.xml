@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Juvavum</string>
+    <string name="action_newgame">New game</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_rules">Rules</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="game_header">Game options</string>
+    <string name="title_activity_rules">Rules</string>
+    <string name="help_text">
+        <![CDATA[
+        <h1>Objective</h1>
+
+        <p>Cram and Juvavum are two-person games. You take turns against the computer. In each move, you put dominoes on the board. The game ends when no more dominoes can be placed. <b>The objective of the game is to make the last move.</b></p>
+
+        <h1>Rules of Domino Juvavum</h1>
+        <p>A domino occupies two (horizontally or vertically) neighbouring fields. In each move, you can place as many dominoes on the board as you wish but <b>they all have to be either in the same row or in the same column</b>.</p>
+        <p>To illustrate, the following images show three legal first moves in Domino Juvavum:</p>
+
+        <p><img src="legal1"/></p>
+        <p><img src="legal2"/></p>
+        <p><img src="legal3"/></p>
+
+        <p>However, the following moves would not be allowed:</p>
+
+        <p><img src="illegal1"/></p>
+        <p><img src="illegal2"/></p>
+        <p><img src="illegal3"/></p>
+
+        <p>The first two don't use dominoes (a domino always covers two adjacent fields). The third violates the rule that all dominoes must be placed in the same row or column.</p>
+
+        <h1>Rules of Cram</h1>
+        <p>The rules of Cram are the same except that you are only allowed to place a single domino in each move.</p>
+
+        <h1>Variation: Misère form</h1>
+        <p>Both games can be played in their normal form or in what is called misère form. In the latter, the player making the last move loses.</p>
+]]></string>
+    <string name="title_activity_main">Juvavum</string>
+    <string name="title_activity_game_controls">How to play?</string>
+    <string name="game_controls_text"><![CDATA[<h1>Make a move</h1>
+    <p>Tap on the fields you want to occupy. You can use swipe gestures to fill multiple fields.</p>
+    <p>You can modify your move by tapping on a filled field again.</p>
+    <p>You can undo your current move by double-tapping outside of the board.</p>
+    <p>Once you are happy with your move, tap the "Confirm move" button below the board.</p>
+    <h1>Colours</h1>
+    <p>Your dominoes will be displayed in red. The computer\'s will be shown in blue.</p>
+    <h1>Start a new game</h1>
+    <p>Tap "New game" above the board.</p>
+    <h1>Change the game settings</h1>
+    <p>Choose "Settings" from the menu.</p>
+    <p>If you make changes to the game settings a new game will be started automatically once you return to the board.</p>
+    <p>If you choose a non-quadratic board (for example, 3 x 7) it will be rotated to best fit the screen. For example, a 3 x 7 board will be rendered as a 7 x 3 board in portrait mode.</p>
+        ]]></string>
+    <string name="action_game_controls">How to play?</string>
+    <string name="action_about">About</string>
+    <string name="title_activity_about">About</string>
+    <string name="about_text"><![CDATA[<h1>History</h1>
+    <p>The game <a href="https://en.wikipedia.org/wiki/Cram_(game)">Cram</a> was popularized by Martin Gardner in 1974.</p>
+    <p>Domino Juvavum was introduced by <a href="https://petergerl.tumblr.com">Peter Gerl</a> at the University of Salzburg. Juvavum (or Iuvavum) was the name of the Roman settlement which developed into today\'s city of Salzburg, Austria.</p>
+    <h1>Credits</h1>
+    <p>Game design and implementation: Martin Schneider (<a href="mailto:mart.schneider@gmail.com">mart.schneider@gmail.com</a>), 2020</p>
+    <p>Background image: <a href="https://www.publicdomainpictures.net/en/view-image.php?image=304923">Wooden Background" by George Hodan</a>
+    <p>Icon photograph: <a href="https://en.wikipedia.org/wiki/Untersberg">Untersberg</a> by Martin Schneider, 2017</p>
+    <p>Music: <a href="https://en.wikipedia.org/wiki/Piano_Sonata_No._11_(Mozart)">W.A. Mozart: Piano Sonata No. 11 A Major Andante grazioso (KV 331)</a></p>
+    <p>In memoriam <a href="https://en.wikipedia.org/wiki/John_Horton_Conway">James Horton Conway (1937-2020)</a></p>]]></string>
+</resources>
