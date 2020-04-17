@@ -3,33 +3,41 @@ package io.github.martinschneider.juvavum.model;
 import android.view.Surface;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import io.github.martinschneider.juvavum.engine.CramSuccessors;
-import io.github.martinschneider.juvavum.engine.DominoJuvavumSuccessors;
+import juvavum.analyse.AbstractAnalysis;
+import juvavum.analyse.Board;
+import juvavum.analyse.Position;
 
-public class Board {
+public class GameBoard {
 
     private int[][] board;
     private int h;
     private int w;
+    private int emptyFields;
 
-    public Board(Board b) {
+    public GameBoard(GameBoard b) {
         w = b.w;
         h = b.h;
+        emptyFields = h*w;
         board = new int[w][h];
         for (int i = 1; i <= h; i++) {
             for (int j = 1; j <= w; j++) {
                 board[j - 1][i - 1] = b.board[j - 1][i - 1];
+                if (board[j-1][i-1]!=0)
+                {
+                    emptyFields--;
+                }
             }
         }
     }
 
-    public Board(int h, int w) {
+    public GameBoard(int h, int w) {
         this.h = h;
         this.w = w;
+        emptyFields = h*w;
         board = new int[w][h];
     }
 
@@ -44,11 +52,29 @@ public class Board {
     }
 
     public void set(int player, int x, int y) {
+        int prev = board[y - 1][x - 1];
         board[y - 1][x - 1] = player;
+        if (prev != 0 && player == 0)
+        {
+            emptyFields++;
+        }
+        else if (prev==0 && player!=0)
+        {
+            emptyFields--;
+        }
     }
 
     public void clear(int x, int y) {
+        int prev = board[y - 1][x - 1];
         board[y - 1][x - 1] = 0;
+        if (prev!=0)
+        {
+            emptyFields++;
+        }
+    }
+
+    public boolean isFree(int x, int y) {
+        return board[y - 1][x - 1] == 0;
     }
 
     public void prefill(int prefillPerc) {
@@ -79,15 +105,22 @@ public class Board {
         }
     }
 
-    public Set<Board> getSuccessors(String gameType, int currentPlayer) {
-        switch (gameType) {
-            case "DJUV":
-                return new DominoJuvavumSuccessors(this).getSuccessors(currentPlayer);
-            case "CRAM":
-                return new CramSuccessors(this).getSuccessors(currentPlayer);
-            default:
-                return Collections.emptySet();
+    public long flatten() {
+        long value = 0;
+        int x, y = 0;
+        for (int i = 0; i < w * h; i++) {
+            x = i / w;
+            y = i % w;
+            if (board[y][x]!=0) {
+                value += (1 << i);
+            }
         }
+        return value;
+    }
+
+    public int countEmptyFields()
+    {
+        return emptyFields;
     }
 
     public int hashCode() {
@@ -95,10 +128,10 @@ public class Board {
     }
 
     public boolean equals(Object o) {
-        if (!(o instanceof Board)) {
+        if (!(o instanceof GameBoard)) {
             return false;
         }
-        Board b1 = (Board) o;
+        GameBoard b1 = (GameBoard) o;
         return Arrays.deepEquals(board, b1.board);
     }
 
@@ -110,29 +143,70 @@ public class Board {
         return w;
     }
 
-    public Board transform(int previousOrientation, int orientation) {
-        Board newBoard = new Board(this.w, this.h);
+    public GameBoard transform(int previousOrientation, int orientation) {
+        GameBoard newGameBoard = new GameBoard(this.w, this.h);
         for (int i = 1; i <= h; i++) {
             for (int j = 1; j <= w; j++) {
-                newBoard.set(this.get(i, j), j, i);
+                newGameBoard.set(this.get(i, j), j, i);
             }
         }
         if (previousOrientation == Surface.ROTATION_0 && orientation == Surface.ROTATION_270) {
-            newBoard.fliplr();
+            newGameBoard.fliplr();
         } else if (previousOrientation == Surface.ROTATION_270 && orientation == Surface.ROTATION_0) {
-            newBoard.flipud();
+            newGameBoard.flipud();
         } else if (previousOrientation == Surface.ROTATION_0 && orientation == Surface.ROTATION_90) {
-            newBoard.flipud();
+            newGameBoard.flipud();
         } else if (previousOrientation == Surface.ROTATION_90 && orientation == Surface.ROTATION_0) {
-            newBoard.fliplr();
+            newGameBoard.fliplr();
         }
-        return newBoard;
+        return newGameBoard;
+    }
+
+    public Board getSimpleBoard()
+    {
+        Board simpleBoard = new Board(w, h);
+        for (int i = 1; i <= h; i++) {
+            for (int j = 1; j <= w; j++) {
+                if (!this.isFree(i, j))
+                {
+                    simpleBoard.set(i, j);
+                }
+            }
+        }
+        return simpleBoard;
+    }
+
+    private GameBoard toGameBoard(Board curr, GameBoard prev, int currentPlayer)
+    {
+        GameBoard next = new GameBoard(prev);
+        for (int i = 1; i <= h; i++) {
+            for (int j = 1; j <= w; j++) {
+                if (prev.isFree(i, j) && !curr.isFree(i,j))
+                {
+                    next.set(currentPlayer, i,j);
+                }
+            }
+        }
+        return next;
+    }
+
+    public Set<GameBoard> getSuccessors(AbstractAnalysis analysis, int currentPlayer)
+    {
+        Set<GameBoard> successors = new HashSet<>();
+        Board simpleBoard = getSimpleBoard();
+        analysis.setBoard(simpleBoard);
+        Set<Position> children = analysis.addChildren(simpleBoard, new HashSet<Position>());
+        for (Position child : children)
+        {
+           successors.add(toGameBoard(child.getBoard(), this, currentPlayer));
+        }
+        return successors;
     }
 
     /**
      * flip board vertically
      */
-    public Board fliplr() {
+    public GameBoard fliplr() {
         int dy = board.length;
         int dx = board[0].length;
         int help;
@@ -149,7 +223,7 @@ public class Board {
     /**
      * flip board horizontally
      */
-    public Board flipud() {
+    public GameBoard flipud() {
         int dy = board.length;
         int dx = board[0].length;
         int help;
@@ -161,5 +235,20 @@ public class Board {
             }
         }
         return this;
+    }
+
+    /** @return string representation */
+    @Override
+    public String toString() {
+        String ret = "";
+        for (int i = 0; i < board[0].length; i++) {
+            for (int j = 0; j < board.length; j++) {
+
+                    ret += (board[j][i] +" ");
+
+            }
+            ret += "\n";
+        }
+        return ret;
     }
 }

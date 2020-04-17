@@ -15,12 +15,20 @@ public abstract class AbstractAnalysis extends ResultsPrinter {
     System.out.println("\n" + getGameName());
   }
 
+  public void setBoard(Board b) {
+    this.b = b;
+  }
+
+  public Map<Board, Integer> getGrundyMap() {
+    return grundyMap;
+  }
+
   protected void analyse() {
     timer.start();
     printResults(grundy());
   }
 
-  protected int grundy() {
+  public int grundy() {
     return grundy(new Position(b));
   }
 
@@ -42,15 +50,15 @@ public abstract class AbstractAnalysis extends ResultsPrinter {
     return gValue;
   }
 
-  protected abstract Set<Position> addChildren(Board b, Set<Position> children);
+  public abstract Set<Position> addChildren(Board b, Set<Position> children);
 
   protected int mex(Set<Position> positions) {
     int i = 0;
     int mex = -1;
     while (mex == -1) {
       boolean found = false;
-      for (Position graph : positions) {
-        int j = grundy(graph);
+      for (Position position : positions) {
+        int j = grundy(position);
         if (j == i) {
           found = true;
           break;

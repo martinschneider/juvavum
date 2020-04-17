@@ -58,7 +58,7 @@ public class CRAMAnalysis extends AbstractAnalysis {
   }
 
   @Override
-  protected Set<Position> addChildren(Board board, Set<Position> children) {
+  public Set<Position> addChildren(Board board, Set<Position> children) {
     children = rowMoves(board, children);
     children = columnMoves(board, children);
     return children;

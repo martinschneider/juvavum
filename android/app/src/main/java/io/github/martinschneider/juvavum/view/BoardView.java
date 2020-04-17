@@ -16,18 +16,16 @@ import android.view.View;
 import android.view.WindowManager;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import io.github.martinschneider.juvavum.R;
-import io.github.martinschneider.juvavum.model.Board;
+import io.github.martinschneider.juvavum.model.GameBoard;
 import io.github.martinschneider.juvavum.utils.Utils;
-
-import static android.util.DisplayMetrics.DENSITY_HIGH;
-import static android.util.DisplayMetrics.DENSITY_LOW;
-import static android.util.DisplayMetrics.DENSITY_MEDIUM;
-import static android.util.DisplayMetrics.DENSITY_XHIGH;
-import static android.util.DisplayMetrics.DENSITY_XXHIGH;
-import static android.util.DisplayMetrics.DENSITY_XXXHIGH;
+import juvavum.analyse.AbstractAnalysis;
+import juvavum.analyse.Board;
+import juvavum.analyse.CRAMAnalysis;
+import juvavum.analyse.DJUVAnalysis;
 
 public class BoardView extends View {
 
@@ -39,6 +37,8 @@ public class BoardView extends View {
 
     private static final int PREFILL_PERCENTAGE = 25;
     private static final int DOUBLE_TAP_TIME = 250;
+    // max number of empty fields before end game analysis is triggered
+    private static final int END_GAME_ANALYSIS_THRESHOLD = 20;
 
     private int width;
     private int height;
@@ -49,12 +49,16 @@ public class BoardView extends View {
     private boolean humanStarts;
     private boolean misere;
     private boolean sounds;
-    private Board newPos;
-    private Board oldPos;
+    private GameBoard newPos;
+    private GameBoard oldPos;
     private String gameType;
     private boolean prefill;
+    private int computerStrength = 10;
     private boolean freeze;
     private int previousOrientation;
+    private AbstractAnalysis analysis;
+    private boolean endGameAnalysisDone;
+    private Map<Board, Integer> grundyMap;
 
     private int lastValue = -1;
     private long lastDown;
@@ -106,6 +110,10 @@ public class BoardView extends View {
             newGame();
             return;
         }
+        if (computerStrength != Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("computerStrength", "3"))) {
+            newGame();
+            return;
+        }
         if (prefill != PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("prefill", false)) {
             newGame();
             return;
@@ -126,12 +134,13 @@ public class BoardView extends View {
     }
 
     private void loadSettings() {
+        misere = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("misere", false);
+        computerStrength = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("computerStrength", "3"));
         gameType = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("gameType", "DJUV");
         if (!gameType.equals("DJUV") && !gameType.equals("CRAM"))
         {
             gameType = "DJUV";
         }
-        misere = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("misere", false);
         humanStarts = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("humanStarts", false);
         sounds = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("sounds", false);
         originalHeight = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("height", "5"));
@@ -181,8 +190,8 @@ public class BoardView extends View {
         return newCoordinates;
     }
 
-    private boolean isValid(Board oldPos, Board newPos) {
-        return oldPos.getSuccessors(gameType, currentPlayer).contains(newPos);
+    private boolean isValid(GameBoard oldPos, GameBoard newPos) {
+        return oldPos.getSuccessors(analysis, currentPlayer).contains(newPos);
     }
 
     private boolean isInsideBoard(float x, float y) {
@@ -291,18 +300,19 @@ public class BoardView extends View {
                 playSound(R.raw.domino1);
             }
             currentMove.clear();
-            Set<Board> successors = newPos.getSuccessors(gameType, currentPlayer);
+            Log.i("Test","Empty fields: " + newPos.countEmptyFields());
+            Set<GameBoard> successors = newPos.getSuccessors(analysis, currentPlayer);
             if (!successors.isEmpty()) {
                 currentPlayer = (currentPlayer == 1) ? 2 : 1;
                 computerMove();
                 oldPos = newPos;
-                newPos = new Board(newPos);
-                successors = newPos.getSuccessors(gameType, currentPlayer);
+                newPos = new GameBoard(newPos);
+                successors = newPos.getSuccessors(analysis, currentPlayer);
                 invalidate();
                 if (misere && !successors.isEmpty()) {
                     boolean misereOver = true;
-                    for (Board b : successors) {
-                        if (b.getSuccessors(gameType, currentPlayer).size() > 0) {
+                    for (GameBoard b : successors) {
+                        if (b.getSuccessors(analysis, currentPlayer).size() > 0) {
                             misereOver = false;
                             break;
                         }
@@ -322,26 +332,65 @@ public class BoardView extends View {
     }
 
     private void computerMove() {
-        Set<Board> successors = newPos.getSuccessors(gameType, currentPlayer);
+        Set<GameBoard> successors = newPos.getSuccessors(analysis, currentPlayer);
+        if (newPos.countEmptyFields()<=END_GAME_ANALYSIS_THRESHOLD)
+        {
+            if (!endGameAnalysisDone)
+            {
+                analysis.grundy();
+                grundyMap = analysis.getGrundyMap();
+                endGameAnalysisDone = true;
+            }
+            Set<GameBoard> winningMoves = new HashSet<>();
+            for (GameBoard gameBoard : successors)
+            {
+                Board simpleBoard = gameBoard.getSimpleBoard();
+                if (grundyMap.containsKey(simpleBoard) && grundyMap.get(simpleBoard)==0)
+                {
+                    winningMoves.add(gameBoard);
+                }
+            }
+            Set<GameBoard> loosingMoves = new HashSet<>(successors);
+            loosingMoves.removeAll(winningMoves);
+            if (loosingMoves.isEmpty())
+            {
+                successors = winningMoves;
+            }
+            else if(winningMoves.isEmpty())
+            {
+                successors = loosingMoves;
+            }
+            else
+            {
+                successors = (Math.random() > ((double)2 * computerStrength)/10) ? loosingMoves : winningMoves;
+            }
+        }
         newPos = successors.stream().skip((int) (successors.size() * Math.random())).findFirst().get();
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
     }
 
     public void newGame() {
+        endGameAnalysisDone=false;
         loadSettings();
         currentMove.clear();
-        oldPos = new Board(height, width);
+        oldPos = new GameBoard(height, width);
         if (prefill) {
             oldPos.prefill(PREFILL_PERCENTAGE);
         }
-        newPos = new Board(oldPos);
+        newPos = new GameBoard(oldPos);
+        switch(gameType)
+        {
+            case "CRAM" : analysis = new CRAMAnalysis(newPos.getSimpleBoard(), misere);
+                break;
+            case "DJUV" : analysis = new DJUVAnalysis(newPos.getSimpleBoard(), misere);
+        }
         if (humanStarts) {
             currentPlayer = 1;
         } else {
             currentPlayer = 2;
             computerMove();
             oldPos = newPos;
-            newPos = new Board(newPos);
+            newPos = new GameBoard(newPos);
         }
         unfreeze();
     }
