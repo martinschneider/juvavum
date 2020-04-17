@@ -49,24 +49,20 @@ public class Board {
    * @param w width
    * @param h height
    */
-  public Board(long binary, int h, int w) {
+  public Board(int h, int w, long binary) {
     this.h = h;
     this.w = w;
-    int x = 0;
-    int y = 0;
     this.board = new boolean[w][h];
-    int j = 0;
-    for (j = 0; j < h * w - 1; j++) {
-      x = j / w;
-      y = j % w;
-      if ((binary & (1L << x)) == 0) {
-        board[y][x] = false;
-      } else {
-        board[y][x] = true;
-      }
-      j++;
+    for (int i = 0; i < h * w; i++) {
+      board[i % w][i / w] = ((binary & 1L << i) != 0);
     }
   }
+
+  public static void main(String args[]) {
+    Board b = new Board(4, 3, 21);
+    b.output();
+  }
+
 
   public Board(Graph<Integer, SimpleEdge> graph, int h, int w) {
     this.h = h;
@@ -115,11 +111,8 @@ public class Board {
    */
   public long flatten() {
     long value = 0;
-    int x, y = 0;
     for (int i = 0; i < w * h; i++) {
-      x = i / w;
-      y = i % w;
-      if (board[y][x]) {
+      if (board[i % w][i / w]) {
         value += (1 << i);
       }
     }
