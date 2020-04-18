@@ -107,12 +107,9 @@ public class GameBoard {
 
     public long flatten() {
         long value = 0;
-        int x, y = 0;
         for (int i = 0; i < w * h; i++) {
-            x = i / w;
-            y = i % w;
-            if (board[y][x]!=0) {
-                value += (1 << i);
+            if (board[i % w][i / w]!=0) {
+                value += (1L << i);
             }
         }
         return value;
@@ -243,9 +240,7 @@ public class GameBoard {
         String ret = "";
         for (int i = 0; i < board[0].length; i++) {
             for (int j = 0; j < board.length; j++) {
-
                     ret += (board[j][i] +" ");
-
             }
             ret += "\n";
         }

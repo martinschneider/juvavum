@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                         displayWinner("You win");
                         break;
                     case BoardView.COMPUTER_WINS:
-                        displayWinner("You loose");
+                        displayWinner("You lose");
                 }
             }
 

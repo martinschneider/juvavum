@@ -113,7 +113,7 @@ public class Board {
     long value = 0;
     for (int i = 0; i < w * h; i++) {
       if (board[i % w][i / w]) {
-        value += (1 << i);
+        value += (1L << i);
       }
     }
     return value;
