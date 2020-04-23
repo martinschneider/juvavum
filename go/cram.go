@@ -1,8 +1,23 @@
-package cgt
+package main
 
-func GetSuccessors(b Board, g Game, children BoardMap) BoardMap {
-	children = getColumnSuccessors(b, g, children)
-	children = getRowSuccessors(b, g, children)
+type Game int
+
+const (
+	CRAM Game = iota
+	DJUV
+)
+
+func (g Game) String() string {
+	return [...]string{"CRAM", "DJUV"}[g]
+}
+
+type CRAMAnalysis struct {
+	g Game
+}
+
+func (analysis CRAMAnalysis) Successors(b Board, children BoardMap) BoardMap {
+	children = getColumnSuccessors(b, analysis.g, children)
+	children = getRowSuccessors(b, analysis.g, children)
 	return children
 }
 
@@ -20,8 +35,8 @@ func getColumnSuccessorsInCol(b Board, g Game, j int, children BoardMap) BoardMa
 			b1[i-1][j-1] = true
 			b1[i][j-1] = true
 			children[board2bin(b1)] = b1
-			if (g == DJUV){
-				for k, v := range getColumnSuccessorsInCol(b1, g, j, make(BoardMap)){
+			if g == DJUV {
+				for k, v := range getColumnSuccessorsInCol(b1, g, j, make(BoardMap)) {
 					children[k] = v
 				}
 			}
@@ -44,8 +59,8 @@ func getRowSuccessorsInRow(b Board, g Game, i int, children BoardMap) BoardMap {
 			b1[i-1][j-1] = true
 			b1[i-1][j] = true
 			children[board2bin(b1)] = b1
-			if (g == DJUV){
-				for k, v := range getRowSuccessorsInRow(b1, g, i, make(BoardMap)){
+			if g == DJUV {
+				for k, v := range getRowSuccessorsInRow(b1, g, i, make(BoardMap)) {
 					children[k] = v
 				}
 			}

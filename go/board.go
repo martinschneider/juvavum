@@ -1,4 +1,6 @@
-package cgt
+package main
+
+type Board [][]bool
 
 func NewBoard(h int, w int) Board {
 	board := make([][]bool, h)
