@@ -15,12 +15,15 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
 import io.github.martinschneider.juvavum.R;
 import io.github.martinschneider.juvavum.model.GameBoard;
+import io.github.martinschneider.juvavum.utils.Stack;
 import io.github.martinschneider.juvavum.utils.Utils;
 import juvavum.analyse.AbstractAnalysis;
 import juvavum.analyse.Board;
@@ -49,8 +52,7 @@ public class BoardView extends View {
     private boolean humanStarts;
     private boolean misere;
     private boolean sounds;
-    private GameBoard newPos;
-    private GameBoard oldPos;
+    private Stack<GameBoard> positions = new Stack<>();
     private String gameType;
     private boolean prefill;
     private int computerStrength = 10;
@@ -157,8 +159,12 @@ public class BoardView extends View {
             int tmp = width;
             width = height;
             height = tmp;
+            GameBoard newPos = positions.pop();
+            GameBoard oldPos = positions.pop();
             oldPos = oldPos.transform(previousOrientation, orientation);
             newPos = newPos.transform(previousOrientation, orientation);
+            positions.push(oldPos);
+            positions.push(newPos);
             currentGesture = transform(currentGesture, previousOrientation, orientation);
             currentMove = transform(currentMove, previousOrientation, orientation);
             previousOrientation = orientation;
@@ -215,14 +221,14 @@ public class BoardView extends View {
                         int i = (int) (x - xOffset) / fieldSize + 1;
                         int j = (int) (y - yOffset) / fieldSize + 1;
                         Pair coordinates = Pair.create(j, i);
-                        int value = newPos.get(j, i);
+                        int value = positions.peekFirst().get(j, i);
                         if (value == 0) {
-                            newPos.set(currentPlayer, j, i);
+                            positions.peekFirst().set(currentPlayer, j, i);
                             currentGesture.add(coordinates);
                             currentMove.add(coordinates);
                             lastValue = 0;
                         } else if (value == currentPlayer && currentMove.contains(coordinates)) {
-                            newPos.clear(j, i);
+                            positions.peekFirst().clear(j, i);
                             currentGesture.add(coordinates);
                             currentMove.add(coordinates);
                             lastValue = currentPlayer;
@@ -235,13 +241,13 @@ public class BoardView extends View {
                         int i = (int) (x - xOffset) / fieldSize + 1;
                         int j = (int) (y - yOffset) / fieldSize + 1;
                         Pair coordinates = Pair.create(j, i);
-                        if (!currentGesture.contains(coordinates) && newPos.get(j, i) == lastValue) {
+                        if (!currentGesture.contains(coordinates) && positions.peekFirst().get(j, i) == lastValue) {
                             if (lastValue == 0) {
-                                newPos.set(currentPlayer, j, i);
+                                positions.peekFirst().set(currentPlayer, j, i);
                                 currentGesture.add(coordinates);
                                 currentMove.add(coordinates);
                             } else if (lastValue == currentPlayer && currentMove.contains(coordinates)) {
-                                newPos.clear(j, i);
+                                positions.peekFirst().clear(j, i);
                                 currentGesture.add(coordinates);
                                 currentMove.add(coordinates);
                                 lastValue = currentPlayer;
@@ -279,9 +285,9 @@ public class BoardView extends View {
     }
 
     private void drawBoard(Canvas canvas) {
-        for (int i = 1; i <= newPos.getHeight(); i++) {
-            for (int j = 1; j <= newPos.getWidth(); j++) {
-                int value = newPos.get(i, j);
+        for (int i = 1; i <= positions.peekFirst().getHeight(); i++) {
+            for (int j = 1; j <= positions.peekFirst().getWidth(); j++) {
+                int value = positions.peekFirst().get(i, j);
                 fillField(canvas, value, j, i);
             }
         }
@@ -295,19 +301,17 @@ public class BoardView extends View {
         if (freeze) {
             return GAME_OVER;
         }
-        if (isValid(oldPos, newPos)) {
+        if (isValid(positions.peekSecond(), positions.peekFirst())) {
             if (sounds) {
                 playSound(R.raw.domino1);
             }
             currentMove.clear();
-            Log.i("Test","Empty fields: " + newPos.countEmptyFields());
-            Set<GameBoard> successors = newPos.getSuccessors(analysis, currentPlayer);
+            Set<GameBoard> successors = positions.peekFirst().getSuccessors(analysis, currentPlayer);
             if (!successors.isEmpty()) {
                 currentPlayer = (currentPlayer == 1) ? 2 : 1;
                 computerMove();
-                oldPos = newPos;
-                newPos = new GameBoard(newPos);
-                successors = newPos.getSuccessors(analysis, currentPlayer);
+                positions.push(new GameBoard(positions.peekFirst()));
+                successors = positions.peekFirst().getSuccessors(analysis, currentPlayer);
                 invalidate();
                 if (misere && !successors.isEmpty()) {
                     boolean misereOver = true;
@@ -332,8 +336,8 @@ public class BoardView extends View {
     }
 
     private void computerMove() {
-        Set<GameBoard> successors = newPos.getSuccessors(analysis, currentPlayer);
-        if (newPos.countEmptyFields()<=END_GAME_ANALYSIS_THRESHOLD)
+        Set<GameBoard> successors =  positions.peek().getSuccessors(analysis, currentPlayer);
+        if (positions.peek().countEmptyFields()<=END_GAME_ANALYSIS_THRESHOLD)
         {
             if (!endGameAnalysisDone)
             {
@@ -365,7 +369,7 @@ public class BoardView extends View {
                 successors = (Math.random() > ((double)2 * computerStrength)/10) ? loosingMoves : winningMoves;
             }
         }
-        newPos = successors.stream().skip((int) (successors.size() * Math.random())).findFirst().get();
+        positions.push(successors.stream().skip((int) (successors.size() * Math.random())).findFirst().get());
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
     }
 
@@ -373,24 +377,25 @@ public class BoardView extends View {
         endGameAnalysisDone=false;
         loadSettings();
         currentMove.clear();
-        oldPos = new GameBoard(height, width);
+        positions.clear();
+        GameBoard position = new GameBoard(height, width);
         if (prefill) {
-            oldPos.prefill(PREFILL_PERCENTAGE);
+            position.prefill(PREFILL_PERCENTAGE);
         }
-        newPos = new GameBoard(oldPos);
+        positions.push(position);
+        positions.push(new GameBoard(position));
         switch(gameType)
         {
-            case "CRAM" : analysis = new CRAMAnalysis(newPos.getSimpleBoard(), misere);
+            case "CRAM" : analysis = new CRAMAnalysis(positions.peekFirst().getSimpleBoard(), misere);
                 break;
-            case "DJUV" : analysis = new DJUVAnalysis(newPos.getSimpleBoard(), misere);
+            case "DJUV" : analysis = new DJUVAnalysis(positions.peekFirst().getSimpleBoard(), misere);
         }
         if (humanStarts) {
             currentPlayer = 1;
         } else {
             currentPlayer = 2;
             computerMove();
-            oldPos = newPos;
-            newPos = new GameBoard(newPos);
+            positions.push(new GameBoard(positions.peekFirst()));
         }
         unfreeze();
     }
@@ -415,7 +420,7 @@ public class BoardView extends View {
 
     private void clearCurrentMove() {
         for (Pair<Integer, Integer> pair : currentMove) {
-            newPos.clear(pair.first, pair.second);
+            positions.peekFirst().clear(pair.first, pair.second);
         }
         currentMove.clear();
     }
@@ -428,5 +433,19 @@ public class BoardView extends View {
 
     private boolean isRotated(int orientation) {
         return orientation == Surface.ROTATION_270 || orientation == Surface.ROTATION_90;
+    }
+
+    public boolean undoMove() {
+        if ((!humanStarts && positions.size()<6) || (humanStarts && positions.size()<3)) // no moves to undo
+        {
+            return false;
+        }
+        positions.pop();
+        positions.pop();
+        positions.pop();
+        positions.push(new GameBoard(positions.peekFirst()));
+        unfreeze();
+        invalidate();
+        return true;
     }
 }

@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.start();
         }
         boardView.reloadIfChanged();
+        findViewById(R.id.buttonUndo).setVisibility((PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("undo", false)) ? View.VISIBLE : View.GONE);
         super.onResume();
     }
 
@@ -92,11 +93,24 @@ public class MainActivity extends AppCompatActivity {
         newGameButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                findViewById(R.id.buttonConfirm).setVisibility(View.VISIBLE);
                 boardView.newGame();
             }
         });
 
-        Button moveButton = findViewById(R.id.buttonConfirm);
+        Button undoButton = findViewById(R.id.buttonUndo);
+        undoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.buttonConfirm).setVisibility(View.VISIBLE);
+                if (!boardView.undoMove())
+                {
+                    displayAlert("Error", "No moves to undo");
+                }
+            }
+        });
+
+        final Button moveButton = findViewById(R.id.buttonConfirm);
         moveButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -119,21 +133,22 @@ public class MainActivity extends AppCompatActivity {
 
             private void displayWinner(String message) {
                 displayAlert("Game over", message);
+                moveButton.setVisibility(View.GONE);
                 boardView.freeze();
             }
-
-            private void displayAlert(String title, String message) {
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                alertDialog.setTitle(title);
-                alertDialog.setMessage(message);
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
         });
+    }
+
+    private void displayAlert(String title, String message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 }
