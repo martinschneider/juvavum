@@ -40,7 +40,7 @@ public class LCRAMAnalysis {
       return gValues[n];
     } else {
       Vector<Integer> values = new Vector<Integer>();
-      for (int i = 0; i <= n - 2; i++) {
+      for (int i = 0; i <= n/2; i++) {
         int tmp = grundy(i) ^ grundy(n - 2 - i);
         values.add(tmp);
       }
