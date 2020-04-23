@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -15,9 +14,7 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
-import java.util.Deque;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -82,10 +79,10 @@ public class BoardView extends View {
     }
 
     private void initialiseLineWidth() {
-        Display display = ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         display.getMetrics(metrics);
-        lineWidth = Math.max(2,metrics.densityDpi/75);
+        lineWidth = Math.max(2, metrics.densityDpi / 75);
     }
 
     private void initialiseColours() {
@@ -139,8 +136,7 @@ public class BoardView extends View {
         misere = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("misere", false);
         computerStrength = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("computerStrength", "3"));
         gameType = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("gameType", "DJUV");
-        if (!gameType.equals("DJUV") && !gameType.equals("CRAM"))
-        {
+        if (!gameType.equals("DJUV") && !gameType.equals("CRAM")) {
             gameType = "DJUV";
         }
         humanStarts = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("humanStarts", false);
@@ -336,37 +332,28 @@ public class BoardView extends View {
     }
 
     private void computerMove() {
-        Set<GameBoard> successors =  positions.peek().getSuccessors(analysis, currentPlayer);
-        if (positions.peek().countEmptyFields()<=END_GAME_ANALYSIS_THRESHOLD)
-        {
-            if (!endGameAnalysisDone)
-            {
+        Set<GameBoard> successors = positions.peek().getSuccessors(analysis, currentPlayer);
+        if (positions.peek().countEmptyFields() <= END_GAME_ANALYSIS_THRESHOLD) {
+            if (!endGameAnalysisDone) {
                 analysis.grundy();
                 grundyMap = analysis.getGrundyMap();
                 endGameAnalysisDone = true;
             }
             Set<GameBoard> winningMoves = new HashSet<>();
-            for (GameBoard gameBoard : successors)
-            {
+            for (GameBoard gameBoard : successors) {
                 Board simpleBoard = gameBoard.getSimpleBoard();
-                if (grundyMap.containsKey(simpleBoard) && grundyMap.get(simpleBoard)==0)
-                {
+                if (grundyMap.containsKey(simpleBoard) && grundyMap.get(simpleBoard) == 0) {
                     winningMoves.add(gameBoard);
                 }
             }
             Set<GameBoard> loosingMoves = new HashSet<>(successors);
             loosingMoves.removeAll(winningMoves);
-            if (loosingMoves.isEmpty())
-            {
+            if (loosingMoves.isEmpty()) {
                 successors = winningMoves;
-            }
-            else if(winningMoves.isEmpty())
-            {
+            } else if (winningMoves.isEmpty()) {
                 successors = loosingMoves;
-            }
-            else
-            {
-                successors = (Math.random() > ((double)2 * computerStrength)/10) ? loosingMoves : winningMoves;
+            } else {
+                successors = (Math.random() > ((double) 2 * computerStrength) / 10) ? loosingMoves : winningMoves;
             }
         }
         positions.push(successors.stream().skip((int) (successors.size() * Math.random())).findFirst().get());
@@ -374,7 +361,7 @@ public class BoardView extends View {
     }
 
     public void newGame() {
-        endGameAnalysisDone=false;
+        endGameAnalysisDone = false;
         loadSettings();
         currentMove.clear();
         positions.clear();
@@ -384,11 +371,12 @@ public class BoardView extends View {
         }
         positions.push(position);
         positions.push(new GameBoard(position));
-        switch(gameType)
-        {
-            case "CRAM" : analysis = new CRAMAnalysis(positions.peekFirst().getSimpleBoard(), misere);
+        switch (gameType) {
+            case "CRAM":
+                analysis = new CRAMAnalysis(positions.peekFirst().getSimpleBoard(), misere);
                 break;
-            case "DJUV" : analysis = new DJUVAnalysis(positions.peekFirst().getSimpleBoard(), misere);
+            case "DJUV":
+                analysis = new DJUVAnalysis(positions.peekFirst().getSimpleBoard(), misere);
         }
         if (humanStarts) {
             currentPlayer = 1;
@@ -436,7 +424,7 @@ public class BoardView extends View {
     }
 
     public boolean undoMove() {
-        if ((!humanStarts && positions.size()<6) || (humanStarts && positions.size()<3)) // no moves to undo
+        if ((!humanStarts && positions.size() < 6) || (humanStarts && positions.size() < 3)) // no moves to undo
         {
             return false;
         }
