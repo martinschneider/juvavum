@@ -22,6 +22,7 @@ The original implementation is in Java. Implementations in other languages are a
 * [Go](go): Implementation in Go. More performant but (for now) less functionality.
 * [Android](android): Playable version of Cram and Juvavum for Android.
 * [Erlang](erlang): Basic Erlang implementation for some board sizes.
+* [8086 Assembler](asm/8086): Pretty-print for 4x4 boards.
 
 # Results
 I am collecting results in this [Google Sheet](https://docs.google.com/spreadsheets/d/1QFaqaRN4wdvPGEEx9gDphZzy8yk3d-RP9WAN8shMqsU/edit?usp=sharing).
