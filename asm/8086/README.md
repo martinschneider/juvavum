@@ -2,7 +2,7 @@
 
 # Explanation and usage
 
-Each field of a 4x4 grid is represented by a power of 2:
+Each cell of a 4x4 grid is represented by a power of 2:
 
     2^0  2^1  2^2  2^3
     2^4  2^5  2^6  2^7
@@ -11,7 +11,7 @@ Each field of a 4x4 grid is represented by a power of 2:
 
 The sum of these powers is the numerical representation of the board.
 
-This program prints the board represented by the number passed as its argument.
+This program prints the board represented by the number passed as its argument. It outputs the board both as text (see below) and graphically (in VGA mode).
 
 For example, `board 1000` will print:
 
