@@ -6,6 +6,10 @@ type grundyMap map[uint64]int
 
 var grundyValues grundyMap = make(grundyMap)
 
+func Clear() {
+	grundyValues = make(grundyMap)
+}
+
 func Grundy(b Board, analysis Analysis, misere bool) (int, grundyMap) {
 	bin := board2bin(b)
 	var g int
