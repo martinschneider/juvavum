@@ -1,0 +1,44 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="juvavum.js"></script>
+  <link rel="stylesheet" href="juvavum.css" />
+  <title>Play Juvavum</title>
+</head>
+
+<body>
+  <div id="controls">
+    <label>Board size:</label>
+    <select id="height">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5" selected>5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+    </select> x
+    <select id="width">
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5" selected>5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+    </select>
+    <label for="type">Game type:</label>
+    <select id="type">
+      <option value="JUV" disabled>Juvavum</option>
+      <option value="DJUV" disabled>Domino Juvavum</option>
+      <option value="CRAM">Cram</option>
+    </select>
+    <label for="misere">Misere</label>
+    <input type="checkbox" id="misere" disabled>
+    <input type="button" id="start" value="New game" onclick="start()">
+    <input type="button" id="confirm" value="Confirm move" onclick="move()">
+  </div>
+</body>
+<table id="board" />
+
+</html>
