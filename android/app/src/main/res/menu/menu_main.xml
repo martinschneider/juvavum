@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="io.github.martinschneider.juvavum.activity.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_rules"
         android:orderInCategory="100"
         android:title="@string/action_rules"
@@ -16,6 +11,11 @@
         android:id="@+id/action_game_controls"
         android:orderInCategory="100"
         android:title="@string/action_game_controls"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_about"

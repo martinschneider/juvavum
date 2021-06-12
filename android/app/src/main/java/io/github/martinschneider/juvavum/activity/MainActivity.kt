@@ -25,16 +25,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> {
-                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-                true
-            }
             R.id.action_rules -> {
                 startActivity(Intent(this@MainActivity, RulesActivity::class.java))
                 true
             }
             R.id.action_game_controls -> {
                 startActivity(Intent(this@MainActivity, GameControlsActivity::class.java))
+                true
+            }
+            R.id.action_settings -> {
+                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
                 true
             }
             R.id.action_about -> {
