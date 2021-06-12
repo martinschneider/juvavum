@@ -1,7 +1,7 @@
 juvavum
 =======
 
-Analyse the games Juvavum, Domino Juvavum and Cram.
+Analyse and play the games Juvavum, Domino Juvavum and Cram.
 
 # Introduction
 Juvavum, Domino Juvavum and Cram are impartial, [combinatorical games](https://en.wikipedia.org/wiki/Combinatorial_game_theory) played on an m x n board.
@@ -20,7 +20,9 @@ The original implementation is in Java. Implementations in other languages are a
 
 * [Java](java): Analyse Juvavum, Domino and Cram on all board sizes.
 * [Go](go): Implementation in Go. More performant but (for now) less functionality.
-* [Android](android): Playable version of Cram and Juvavum for Android.
+* [Android](android): Playable version of Cram and Domino Juvavum for Android.
+* [Javascript](js): Playable version of Cram using HTML, CSS and Javascript.
+* [Python](python): Calculate the number of positions for given board sizes.
 * [Erlang](erlang): Basic Erlang implementation for some board sizes.
 * [8086 Assembler](asm/8086): Pretty-print for 4x4 boards.
 
