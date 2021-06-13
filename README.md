@@ -21,7 +21,7 @@ The original implementation is in Java. Implementations in other languages are a
 * [Java](java): Analyse Juvavum, Domino and Cram on all board sizes.
 * [Go](go): Implementation in Go. More performant but (for now) less functionality.
 * [Android](android): Playable version of Cram and Domino Juvavum for Android.
-* [Javascript](js): Playable version of Cram using HTML, CSS and Javascript.
+* [Javascript](js): Playable version of all variants using HTML, CSS and Javascript.
 * [Python](python): Calculate the number of positions for given board sizes.
 * [Erlang](erlang): Basic Erlang implementation for some board sizes.
 * [8086 Assembler](asm/8086): Pretty-print for 4x4 boards.

@@ -2,7 +2,12 @@
 
 <head>
   <script type="text/javascript" src="juvavum.js"></script>
+  <script src="sweetalert2.all.min.js"></script>
   <link rel="stylesheet" href="juvavum.css" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
   <title>Play Juvavum</title>
 </head>
 
@@ -29,14 +34,20 @@
     </select>
     <label for="type">Game type:</label>
     <select id="type">
-      <option value="JUV" disabled>Juvavum</option>
-      <option value="DJUV" disabled>Domino Juvavum</option>
-      <option value="CRAM">Cram</option>
+      <option value="0" selected>Juvavum</option>
+      <option value="1">Domino Juvavum</option>
+      <option value="2">Cram</option>
+      <option value="3">Domineering</option>
     </select>
-    <label for="misere">Misere</label>
     <input type="checkbox" id="misere" disabled>
-    <input type="button" id="start" value="New game" onclick="start()">
-    <input type="button" id="confirm" value="Confirm move" onclick="move()">
+    <label for="misere">Misere</label>
+    <input type="checkbox" id="sounds">
+    <label for="sounds">Sounds</label>
+    <input type="checkbox" id="music">    
+    <label for="music">Music</label>
+    <input type="button" id="start" value="[N]ew game" onclick="start()">
+    <input type="button" id="confirm" value="[C]onfirm move" onclick="move()">
+    <input type="button" id="howto" value="[H]ow to play" onclick="howto()">
   </div>
 </body>
 <table id="board" />
