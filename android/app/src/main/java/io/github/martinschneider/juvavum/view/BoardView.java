@@ -100,36 +100,37 @@ public class BoardView extends View {
     }
 
     // TODO: listen to the preference change event instead
-    public void reloadIfChanged() {
+    public boolean reloadIfChanged() {
         if (gameType != PreferenceManager.getDefaultSharedPreferences(getContext()).getString("gameType", "JUV")) {
             newGame();
-            return;
+            return true;
         }
         if (misere != PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("misere", false)) {
             newGame();
-            return;
+            return true;
         }
         if (computerStrength != Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("computerStrength", "3"))) {
             newGame();
-            return;
+            return true;
         }
         if (prefill != PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("prefill", false)) {
             newGame();
-            return;
+            return true;
         }
         if (humanStarts != PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("humanStarts", false)) {
             newGame();
-            return;
+            return true;
         }
         sounds = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean("sounds", false);
         if (originalHeight != Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("height", "5"))) {
             newGame();
-            return;
+            return true;
         }
         if (originalWidth != Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getContext()).getString("width", "5"))) {
             newGame();
-            return;
+            return true;
         }
+        return false;
     }
 
     private void loadSettings() {

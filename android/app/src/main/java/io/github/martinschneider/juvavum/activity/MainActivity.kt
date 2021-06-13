@@ -17,6 +17,7 @@ import io.github.martinschneider.juvavum.view.BoardView
 class MainActivity : AppCompatActivity() {
     private var boardView: BoardView? = null
     private var mediaPlayer: MediaPlayer? = null
+    private var gameOver: Boolean = false
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.menu_main, menu)
@@ -50,8 +51,9 @@ class MainActivity : AppCompatActivity() {
         if (music && !mediaPlayer!!.isPlaying) {
             mediaPlayer!!.start()
         }
-        boardView!!.reloadIfChanged()
+        val newGame: Boolean = boardView !!. reloadIfChanged ()
         findViewById<View>(R.id.buttonUndo).visibility = if (PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean("undo", false)) View.VISIBLE else View.GONE
+        if (!gameOver || newGame) findViewById<View>(R.id.buttonConfirm).visibility = View.VISIBLE
         super.onResume()
     }
 
@@ -81,11 +83,13 @@ class MainActivity : AppCompatActivity() {
         }
         val newGameButton = findViewById<Button>(R.id.buttonNewGame)
         newGameButton.setOnClickListener {
+            gameOver = false
             findViewById<View>(R.id.buttonConfirm).visibility = View.VISIBLE
             boardView!!.newGame()
         }
         val undoButton = findViewById<Button>(R.id.buttonUndo)
         undoButton.setOnClickListener {
+            gameOver = false
             findViewById<View>(R.id.buttonConfirm).visibility = View.VISIBLE
             if (!boardView!!.undoMove()) {
                 displayAlert("Error", "No moves to undo")
@@ -96,11 +100,18 @@ class MainActivity : AppCompatActivity() {
             override fun onClick(v: View) {
                 val winner = 0
                 when (boardView!!.confirmMove()) {
-                    BoardView.GAME_OVER -> {
-                    }
+                    BoardView.GAME_OVER -> {}
                     BoardView.INVALID_MOVE -> displayAlert("Invalid move", "Please try again")
-                    BoardView.HUMAN_WINS -> displayWinner("You win")
-                    BoardView.COMPUTER_WINS -> displayWinner("You lose")
+                    BoardView.HUMAN_WINS ->
+                    {
+                        displayWinner("You win")
+                        gameOver = true
+                    }
+                    BoardView.COMPUTER_WINS ->
+                    {
+                        displayWinner("You lose")
+                        gameOver = true
+                    }
                 }
             }
 
