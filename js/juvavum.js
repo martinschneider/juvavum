@@ -17,6 +17,7 @@ var sounds;
 var bgMusic;
 var placePiece;
 var takeBackPiece;
+var clearBoardPiece;
 var computerMove;
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -24,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     placePiece=new Audio("domino1.m4a");
     computerMove=new Audio("domino2.m4a");
     takeBackPiece=new Audio("pickup.mp3");
+    clearBoardPiece=new Audio("sweep.mp3");
 
     document.getElementById("width").addEventListener("change", ()=> {
         start();
@@ -71,6 +73,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
         break;
         case 72: howto();
         break;
+        case 83: settings();
+        break;
         default: break;
       }
     }
@@ -92,6 +96,10 @@ window.addEventListener("resize", ()=> {
 function start() {
   updateSize();
   updateSettings();
+  if (sounds && board && key(board)!=0)
+  {
+    clearBoardPiece.play();
+  }
   board=Array(h).fill(0).map(x=> Array(w).fill(0));
   prevBoard=Array(h).fill(0).map(x=> Array(w).fill(0));
   drawBoard(board);
@@ -351,9 +359,17 @@ function placeCol(b, i, j, size, player) {
 function howto() {
   Swal.fire( {
       title: "Juvavum",
-      html: "In each move you can fill as many fields as you want as long as they are all in the same row or the same column. If you make the last possible move you win.<h3>Domino Juvavum</h3>The rules are the same but you are placing dominoes, that means every piece covers exactly two (horizontally or vertically) neighbouring fields. In each move, you can place multiple dominoes, again only in the same row or column.<h3><a href=\"https://en.wikipedia.org/wiki/Cram_(game)\">Cram</a></h3>Like Domino Juvavum but you can only place a single domino in each move.<h3><a href=\"https://en.wikipedia.org/wiki/Domineering\">Domineering</a></h3>Like Cram but you can only place horizontal dominoes (and the computer only vertical ones).",
+      html: "In each move you can fill as many fields as you want as long as they are all in the same row or the same column. If you make the last possible move you win.<h3>Domino Juvavum</h3>The rules are the same but you are placing dominoes, that means every piece covers exactly two (horizontally or vertically) neighbouring fields. In each move, you can place multiple dominoes, again only in the same row or column.<h3><a href=\"https://en.wikipedia.org/wiki/Cram_(game)\">Cram</a></h3>Like Domino Juvavum but you can only place a single domino in each move.<h3><a href=\"https://en.wikipedia.org/wiki/Domineering\">Domineering</a></h3>Like Cram but you can only place horizontal dominoes (and the computer only vertical ones).<h3><a href=\"https://en.wikipedia.org/wiki/Mis%C3%A8re\">Misère variant</a></h3>In misère play, the player making the last move loses.",
       confirmButtonText: "Got it!"
     }
 
   );
+}
+function settings() {
+  var x = document.getElementById("settings");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
 }

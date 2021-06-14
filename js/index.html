@@ -12,8 +12,8 @@
 </head>
 
 <body>
-  <div id="controls">
-    <label>Board size:</label>
+  <div id="settings" class="modal" style="display: none;">
+  <label>Board size:</label>
     <select id="height">
       <option value="2">2</option>
       <option value="3">3</option>
@@ -22,7 +22,7 @@
       <option value="6">6</option>
       <option value="7">7</option>
       <option value="8">8</option>
-    </select> x
+    </select> &times;
     <select id="width">
       <option value="2">2</option>
       <option value="3">3</option>
@@ -45,9 +45,13 @@
     <label for="sounds">Sounds</label>
     <input type="checkbox" id="music">    
     <label for="music">Music</label>
-    <input type="button" id="start" value="[N]ew game" onclick="start()">
-    <input type="button" id="confirm" value="[C]onfirm move" onclick="move()">
-    <input type="button" id="howto" value="[H]ow to play" onclick="howto()">
+    <input type="button" class="swal2-confirm swal2-styled" value="Ok" onclick="settings()" />
+  </div>
+  <div id="controls">
+    <input type="button" class="swal2-confirm swal2-styled" id="start" value="[N]ew game" onclick="start()">
+    <input type="button" class="swal2-confirm swal2-styled" id="confirm" value="[C]onfirm move" onclick="move()">
+    <input type="button" class="swal2-confirm swal2-styled" id="settings" value="[S]ettings" onclick="settings()">
+    <input type="button" class="swal2-confirm swal2-styled" id="howto" value="[H]ow to play" onclick="howto()">
   </div>
 </body>
 <table id="board" />
