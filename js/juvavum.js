@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     document.getElementById("misere").addEventListener("change", ()=> {
         start();
       }
-
     );
 
     document.getElementById("sounds").addEventListener("change", ()=> {
@@ -118,7 +117,7 @@ function updateSettings() {
   w=parseInt(document.getElementById("width").value);
   h=parseInt(document.getElementById("height").value);
   type=parseInt(document.getElementById("type").value);
-  misere=document.getElementById("misere").value;
+  misere=document.getElementById("misere").checked;
   music=document.getElementById("music").checked;
   sounds=document.getElementById("sounds").checked;
 }
@@ -185,16 +184,8 @@ function move() {
   if (successors.has(key(board))) {
     successors=succ(board, 2, false, type);
     board=Array.from(successors)[Math.floor(Math.random() * successors.size)];
-
-    if ( !board) {
-      Swal.fire( {
-          title: "Hooray!",
-          text: "Congratulations, you win!",
-          icon: "success",
-          confirmButtonText: "Ok"
-        }
-
-      );
+    if (!board) {
+      misere ? loss() : win();
       document.getElementById("confirm").disabled=true;
     }
 
@@ -202,13 +193,7 @@ function move() {
     drawBoard();
 
     if (succ(board, 1, true, type).size==0) {
-      Swal.fire( {
-          title: "Oh no!",
-          text: "I'm sorry, you've lost. Let's try again!",
-          icon: "error",
-          confirmButtonText: "Ok"
-        }
-      );
+      misere ? win() : loss();
       document.getElementById("confirm").disabled=true;
 
       if (sounds) {
@@ -231,6 +216,28 @@ function move() {
 
     );
   }
+}
+
+function win()
+{
+  Swal.fire( {
+          title: "Hooray!",
+          text: "Congratulations, you win!",
+          icon: "success",
+          confirmButtonText: "Ok"
+        }
+      );
+}
+
+function loss()
+{
+  Swal.fire( {
+          title: "Oh no!",
+          text: "I'm sorry, you've lost. Let's try again!",
+          icon: "error",
+          confirmButtonText: "Ok"
+        }
+      );
 }
 
 function key(b) {
