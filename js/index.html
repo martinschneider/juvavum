@@ -1,9 +1,16 @@
 <html>
 
 <head>
-  <script type="text/javascript" src="juvavum.js"></script>
-  <script src="sweetalert2.all.min.js"></script>
-  <link rel="stylesheet" href="juvavum.css" />
+  <script type="text/javascript" src="js/globals.js"></script>
+  <script type="text/javascript" src="js/board.js"></script>
+  <script type="text/javascript" src="js/game.js"></script>
+  <script type="text/javascript" src="js/controls.js"></script>
+  <script type="text/javascript" src="js/analyse.js"></script>
+  <script type="text/javascript" src="js/minmax.js"></script>
+  <script type="text/javascript" src="js/I18n.js"></script>
+  <script type="text/javascript" src="js/translations.js"></script>
+  <script type="text/javascript" src="js/sweetalert2.all.min.js"></script>
+  <link rel="stylesheet" href="css/juvavum.css" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
@@ -13,7 +20,7 @@
 
 <body>
   <div id="settings" class="modal" style="display: none;">
-  <label>Board size:</label>
+  <label id="board_size">Board size:</label>
     <select id="height">
       <option value="2">2</option>
       <option value="3">3</option>
@@ -32,28 +39,34 @@
       <option value="7">7</option>
       <option value="8">8</option>
     </select>
-    <label for="type">Game type:</label>
+    <label id="game_type" for="type">Game type:</label>
     <select id="type">
       <option value="0" selected>Juvavum</option>
       <option value="1">Domino Juvavum</option>
       <option value="2">Cram</option>
       <option value="3">Domineering</option>
     </select>
-    <input type="checkbox" id="misere">
-    <label for="misere">Misere</label>
-    <input type="checkbox" id="sounds">
-    <label for="sounds">Sounds</label>
-    <input type="checkbox" id="music">    
-    <label for="music">Music</label>
-    <input type="button" class="swal2-confirm swal2-styled" value="Ok" onclick="settings()" />
+    <input type="checkbox" class="swal2-styled" id="misere">
+    <label id="misere_lbl" for="misere" class="swal2-styled">Misere</label>
+    <input type="checkbox" class="swal2-styled" id="sounds">
+    <label id="sounds_lbl" for="sounds" class="swal2-styled">Sounds</label>
+    <input type="checkbox" class="swal2-styled" id="music">    
+    <label id="music_lbl" for="music" class="swal2-styled">Music</label>
+    <label id="language_lbl" for="language" class="swal2-styled">Language</label>
+    <select id="language">
+      <option value="en" selected>English</option>
+      <option value="de">Deutsch</option>
+    </select>
+    <input id="ok" type="button" class="swal2-confirm swal2-styled" value="Ok" onclick="settings()" />
   </div>
   <div id="controls">
-    <input type="button" class="swal2-confirm swal2-styled" id="start" value="[N]ew game" onclick="start()">
-    <input type="button" class="swal2-confirm swal2-styled" id="confirm" value="[C]onfirm move" onclick="move()">
-    <input type="button" class="swal2-confirm swal2-styled" id="settings" value="[S]ettings" onclick="settings()">
-    <input type="button" class="swal2-confirm swal2-styled" id="howto" value="[H]ow to play" onclick="howto()">
+    <input type="button" class="swal2-confirm swal2-styled" value="[1] Confirm move" id="confirm" onclick="move()">
+    <input type="button" class="swal2-confirm swal2-styled" value="[2] New game" id="new_game" onclick="start()">
+    <input type="button" class="swal2-confirm swal2-styled" value="[3] Settings" id="settings_btn" onclick="settings()">
+    <input type="button" class="swal2-confirm swal2-styled" value="[4] How to play" id="howto" onclick="howto()">
+    <input type="button" class="swal2-confirm swal2-styled" value="[5] About" id="about" onclick="about()">
   </div>
 </body>
 <table id="board" />
-
+<span id="forkongithub"><a href="https://github.com/martinschneider/juvavum" target="_blank">Fork me on GitHub</a></span>
 </html>
