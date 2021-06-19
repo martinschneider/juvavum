@@ -1,6 +1,8 @@
+// returns a set of valid moves from the given board for the specified player and game type
+// if keys == true the binary representation of each position is returned, otherwise the array representation
 function succ(b, player, keys, type) {
   var bin = key(b);
-  if (keys == true && successorsMap.has(bin))
+  if (keys == true && successorsMap.has(bin) && type != DOM)
   {
     return successorsMap.get(bin);
   }
@@ -13,9 +15,11 @@ function succ(b, player, keys, type) {
   return children;
 }
 
+// rows and columns can be used to limit the search in specific parts of the board
+// this is used for juvavum where we can place multiple pieces in every move
 function succ1(b, player, keys, type, rows, columns, children) {
-  size = type == JUV ? 1: 2;
-  if (type != DOM || player == 1) {
+  size = type == JUV ? 1 : 2;
+  if (type != DOM || player % 2 != 0) {
     for (j of rows) {
       for (i of Array(b.length - size + 1).keys()) {
         if (checkFreeRow(b, i, j, size)) {
@@ -28,7 +32,7 @@ function succ1(b, player, keys, type, rows, columns, children) {
       }
     }
   }
-  if (type != DOM || player==2) {
+  if (type != DOM || player % 2 == 0) {
     for (i of columns) {
       for (j of Array(b[0].length - size + 1).keys()) {
         if (checkFreeCol(b, i, j, size)) {
@@ -43,8 +47,9 @@ function succ1(b, player, keys, type, rows, columns, children) {
   }
 }
 
-function checkFreeRow(b, i, j, size) {
-  for (var k = i; k < i + size; k++) {
+// checks if a piece of a given size (1xn) can be placed at position (i,j)
+function checkFreeRow(b, i, j, n) {
+  for (var k = i; k < i + n; k++) {
     if (b[k][j]) {
       return false;
     }
@@ -52,7 +57,8 @@ function checkFreeRow(b, i, j, size) {
   return true;
 }
 
-function placeRow(b, i, j, size, player) {
+// sets a piece of a given size (1xn) at position (i,j) for the specified player
+function placeRow(b, i, j, n, player) {
   var b1 = JSON.parse(JSON.stringify(b));
   for (var k = i; k < i + size; k++) {
     b1[k][j] = player;
@@ -60,8 +66,9 @@ function placeRow(b, i, j, size, player) {
   return b1;
 }
 
-function checkFreeCol(b, i, j, size) {
-  for (var k = j; k < j + size; k++) {
+// checks if a piece of a given size (nx1) can be placed at position (i,j)
+function checkFreeCol(b, i, j, n) {
+  for (var k = j; k < j + n; k++) {
     if (b[i][k]) {
       return false;
     }
@@ -69,6 +76,7 @@ function checkFreeCol(b, i, j, size) {
   return true;
 }
 
+// sets a piece of a given size (1xn) at position (i,j) for the specified player
 function placeCol(b, i, j, size, player) {
   var b1 = JSON.parse(JSON.stringify(b));
   for (var k = j; k < j + size; k++) {
@@ -77,12 +85,13 @@ function placeCol(b, i, j, size, player) {
   return b1;
 }
 
-function grundy(grundyValues, b, misere, type) {
+// returns (and caches) the g-value of a position
+function grundy(gValues, b, misere, type) {
   var bin = key(b);
   var g;
-  if (grundyValues.has(bin))
+  if (gValues.has(bin))
   {
-    return grundyValues.get(bin);
+    return gValues.get(bin);
   }
   var children = succ(b, 2, false, type);
   if (children.size == 0) {
@@ -92,17 +101,18 @@ function grundy(grundyValues, b, misere, type) {
   {
     g = mex(children, misere, type);
   }
-  grundyValues.set(bin,g);
+  gValues.set(bin,g);
   return g;
 }
 
+// minimum exclusive, used for g-value calculation
 function mex(children, misere, type) {
   var i = 0;
   var mex = -1;
   while(mex == -1) {
     var found = false;
     for (b of children){
-      j = grundy(grundyValues, b, misere, type);
+      j = grundy(gValues, b, misere, type);
       if (j == i) {
         found = true;
         break;
@@ -116,17 +126,18 @@ function mex(children, misere, type) {
   return mex;
 }
 
-function aiMove(b, misere, type) {
+// returns a "good" move for the computer player or null if there is none or the game tree is still too large to analyze
+function aiMove(b, misere, type, currMov) {
   var empty = countEmptyFields(b);
   if (empty <= ENDGAME_LIMITS[type]) {
     if (type == DOM && !misere) {
       best = null;
-      max(MIN_MAX_DEPTH, b, misere);
+      max(MIN_MAX_DEPTH, b, currMov);
       return best;
     }
-    grundy(grundyValues, b, misere, type);
-    for (var child of succ(b, 2, false, type)) {
-      if (grundy(grundyValues, child, misere, type) == 0) {
+    grundy(gValues, b, misere, type);
+    for (var child of succ(b, moves, false, type)) {
+      if (grundy(gValues, child, misere, type) == 0) {
         return child;
       }
     }

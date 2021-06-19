@@ -7,57 +7,60 @@
   <script type="text/javascript" src="js/controls.js"></script>
   <script type="text/javascript" src="js/analyse.js"></script>
   <script type="text/javascript" src="js/minmax.js"></script>
-  <script type="text/javascript" src="js/I18n.js"></script>
   <script type="text/javascript" src="js/translations.js"></script>
-  <script type="text/javascript" src="js/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18n-js@3.8.0/app/assets/javascripts/i18n.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="css/juvavum.css" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="manifest" href="site.webmanifest">
+  <meta charset="UTF-8">
   <title>Play Juvavum</title>
 </head>
 
 <body>
   <div id="settings" class="modal" style="display: none;">
-  <label id="board_size">Board size:</label>
-    <select id="height">
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5" selected>5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-    </select> &times;
-    <select id="width">
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5" selected>5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-    </select>
-    <label id="game_type" for="type">Game type:</label>
-    <select id="type">
-      <option value="0" selected>Juvavum</option>
-      <option value="1">Domino Juvavum</option>
-      <option value="2">Cram</option>
-      <option value="3">Domineering</option>
-    </select>
-    <input type="checkbox" class="swal2-styled" id="misere">
-    <label id="misere_lbl" for="misere" class="swal2-styled">Misere</label>
-    <input type="checkbox" class="swal2-styled" id="sounds">
-    <label id="sounds_lbl" for="sounds" class="swal2-styled">Sounds</label>
-    <input type="checkbox" class="swal2-styled" id="music">    
-    <label id="music_lbl" for="music" class="swal2-styled">Music</label>
-    <label id="language_lbl" for="language" class="swal2-styled">Language</label>
-    <select id="language">
-      <option value="en" selected>English</option>
-      <option value="de">Deutsch</option>
-    </select>
-    <input id="ok" type="button" class="swal2-confirm swal2-styled" value="Ok" onclick="settings()" />
+      <label id="board_size">Board size:</label>
+      <select id="height">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4" selected>4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+      </select> &times;
+      <select id="width">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5" selected>5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+      </select>
+      <label id="game_type" for="type">Game type:</label>
+      <select id="type">
+        <option value="0" selected>Juvavum</option>
+        <option value="1">Domino Juvavum</option>
+        <option value="2">Cram</option>
+        <option value="3">Domineering</option>
+      </select>
+      <input type="checkbox" id="computer_first">
+      <label id="computer_first_lbl" for="computer_first">Computer moves first</label>
+      <input type="checkbox" id="misere">
+      <label id="misere_lbl" for="misere" class="swal2-styled">Misère</label>
+      <input type="checkbox" id="sounds">
+      <label id="sounds_lbl" for="sounds" class="swal2-styled">Sounds</label>
+      <input type="checkbox" id="music">    
+      <label id="music_lbl" for="music" class="swal2-styled">Music</label>
+      <label id="language_lbl" for="language" >Language</label>
+      <select id="language">
+        <option value="en" selected>English</option>
+        <option value="de">Deutsch</option>
+      </select>
+      <input id="ok" type="button" class="swal2-confirm swal2-styled" value="Ok" onclick="settings()" />
   </div>
   <div id="controls">
     <input type="button" class="swal2-confirm swal2-styled" value="[1] Confirm move" id="confirm" onclick="move()">

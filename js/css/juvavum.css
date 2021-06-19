@@ -8,7 +8,6 @@ html {
 
 body {
   text-align: center;
-  font-family: Palatino, serif;
 }
 
 #board,
@@ -25,12 +24,62 @@ body {
   border-collapse: collapse;
 }
 
-#board td.player_1 {
-  background-color: red;
+#board td.active {
+  background: lightgray;
 }
 
-#board td.player_2 {
-  background-color: blue;
+#board td.options {
+  background: lightgray;
+}
+
+#board td.player_1_vertical1 {
+  background: url(../images/vertical1_1.png);
+  background-size: cover;
+}
+
+#board td.player_2_vertical1 {
+  background: url(../images/vertical1_2.png);
+  background-size: cover;
+}
+
+#board td.player_1_horizontal1 {
+  background: url(../images/horizontal1_1.png);
+  background-size: cover;
+}
+
+#board td.player_2_horizontal1 {
+  background: url(../images/horizontal1_2.png);
+  background-size: cover;
+}
+
+#board td.player_1_vertical2 {
+  background: url(../images/vertical2_1.png);
+  background-size: cover;
+}
+
+#board td.player_2_vertical2 {
+  background: url(../images/vertical2_2.png);
+  background-size: cover;
+}
+
+#board td.player_1_horizontal2 {
+  background: url(../images/horizontal2_1.png);
+  background-size: cover;
+}
+
+#board td.player_2_horizontal2 {
+  background: url(../images/horizontal2_2.png);
+  background-size: cover;
+}
+
+#board td.player_1_juvavum {
+  background: url(../images/50groschen.jpg);
+  background-size: cover;
+}
+
+#board td.player_2_juvavum {
+  background: url(../images/10groschen.jpg);
+  background-size: cover;
 }
 
 #controls {
@@ -40,6 +89,26 @@ body {
   z-index: 2;
   left: 0;
   top: 0;
+}
+
+div#settings select, label {
+  font-size: 18px;
+}
+
+div#settings input[type=checkbox] {
+    transform: scale(1.5);
+}
+
+div#settings input{
+  margin-left: 12px;
+}
+
+div#settings label{
+  margin: 0;
+}
+
+div#settings input#ok {
+  margin-left: 40px;
 }
 
 div#settings {
@@ -73,11 +142,6 @@ div#settings label {
   line-height: 2rem;
   position: relative;
   transition: 0.5s;
-}
-
-#forkongithub a:hover {
-  background: #c11;
-  color: #fff;
 }
 
 #forkongithub a::before,

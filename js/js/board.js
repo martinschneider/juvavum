@@ -1,3 +1,4 @@
+// returns a binary representation of a game board. this can be used as a key when storing g-values for boards
 function key(b) {
   var key = 0;
   var w = b.length;
@@ -21,3 +22,71 @@ function countEmptyFields(b) {
   }
   return count;
  }
+
+function confirmMove(b, move) {
+  var w = b.length;
+  var h = b[0].length;
+  for (var i = 0; i < h; i++) {
+    for (var j = 0; j < w; j++) {
+      if (b[j][i] == -1)
+      {
+        b[j][i] = move;
+      }
+    }
+  }
+  return b;
+}
+
+function resetMove(b, move) {
+  var w = b.length;
+  var h = b[0].length;
+  for (var i = 0; i < h; i++) {
+    for (var j = 0; j < w; j++) {
+      if (b[j][i] == move)
+      {
+        b[j][i] = 0;
+      }
+    }
+  }
+  return b;
+}
+
+function filledLeftRow(b, i, j) {
+  var count = 0;
+  for (var k=j-1; k>=0; k--) {
+    if (board[k][i]==board[j][i]) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function filledRightRow(b, i, j) {
+  var count = 0;
+  for (var k=j+1; k<board.length; k++) {
+    if (board[k][i]==board[j][i]) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function filledLeftColumn(b, i, j) {
+  var count = 0;
+  for (var k=i-1; k>=0; k--) {
+    if (board[j][k]==board[j][i]) {
+      count++;
+    }
+  }
+  return count;
+}
+
+function filledRightColumn(b, i, j) {
+  var count = 0;
+  for (var k=i+1; k<board[j].length; k++) {
+    if (board[j][k]==board[j][i]) {
+      count++;
+    }
+  }
+  return count;
+}

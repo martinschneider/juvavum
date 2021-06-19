@@ -1,10 +1,10 @@
 var init=false;
 document.addEventListener("DOMContentLoaded", function(event) {
     successorsMap.clear();
-    grundyValues.clear();
+    gValues.clear();
     document.getElementById("width").addEventListener("change", ()=> {
         successorsMap.clear();
-        grundyValues.clear();
+        gValues.clear();
         start();
       }
     );
@@ -20,18 +20,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
     );
     document.getElementById("height").addEventListener("change", ()=> {
         successorsMap.clear();
-        grundyValues.clear();
+        gValues.clear();
         start();
       }
     );
     document.getElementById("type").addEventListener("change", ()=> {
         successorsMap.clear();
-        grundyValues.clear();
+        gValues.clear();
         start();
       }
     );
     document.getElementById("misere").addEventListener("change", ()=> {
-        grundyValues = new Map();
+        gValues = new Map();
+        start();
+      }
+    );
+    document.getElementById("computer_first").addEventListener("change", ()=> {
         start();
       }
     );
@@ -47,14 +51,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       initTranslations();
       }
     );
-    document.onclick = event => {
-      if (event.detail === 2) {
-        move();
-      }
-    };
     document.onkeydown=function(evt) {
       evt=evt || window.event;
-      console.log(evt.keyCode);
       switch (evt.keyCode) {
         case 49: move();
         break;
@@ -85,6 +83,7 @@ function start() {
   updateSize();
   updateSettings();
   gameOver = false;
+  moves = 0;
   var sounds = properties.get("sounds");
   if (sounds && board && key(board)!=0)
   {
@@ -92,9 +91,15 @@ function start() {
   }
   w = properties.get("width");
   h = properties.get("height");
-  board=Array(h).fill(0).map(x=> Array(w).fill(0));
-  prevBoard=Array(h).fill(0).map(x=> Array(w).fill(0));
+  var computer_first = properties.get("computer_first");
+  board = Array(h).fill(0).map(x => Array(w).fill(0));
+  prevBoard = Array(h).fill(0).map(x => Array(w).fill(0));
   drawBoard(board);
+  if (computer_first)
+  {
+    moves++;
+    computerMove();
+  }
   document.getElementById("confirm").disabled=false;
 }
 
@@ -119,6 +124,7 @@ function updateSettings() {
   properties.set("misere", document.getElementById("misere").checked);
   properties.set("music", document.getElementById("music").checked);
   properties.set("sounds", document.getElementById("sounds").checked);
+  properties.set("computer_first", document.getElementById("computer_first").checked);
 }
 
 function updateSize() {
@@ -130,13 +136,14 @@ function toggle(i, j) {
   if (!gameOver)
   {
     var sounds = properties.get("sounds");
+    var type = properties.get("type");
     if (board[i][j] == 0) {
       if (sounds) {
         placePiece.play();
       }
-      board[i][j] = 1;
+      board[i][j] = (type == JUV) ? 1 : -1;
     }
-    else if (board[i][j] == 1 && prevBoard[i][j] == 0) {
+    else if ((board[i][j] == 1 || board[i][j] == -1) && prevBoard[i][j] == 0) {
       if (sounds) {
         takeBackPiece.play();
       }
@@ -148,31 +155,38 @@ function toggle(i, j) {
 
 function invalidMove()
 {
+  resetMove(board, moves);
+  drawBoard(board);
+  moves--;
   Swal.fire({
     title: I18n.t("invalid_title"),
     text: I18n.t("invalid_text"),
     icon: "warning",
-    confirmButtonText: "Try again"
+    confirmButtonText: I18n.t("try_again")
   });
 }
 
-function win()
+async function win()
 {
+  drawBoard(board);
+  await sleep(400);
   Swal.fire({
     title: I18n.t("win_title"),
     text: I18n.t("win_text"),
     icon: "success",
-    confirmButtonText: "Ok"
+    confirmButtonText: I18n.t("ok")
   });
 }
 
-function loss()
+async function loss()
 {
+  drawBoard(board);
+  await sleep(400);
   Swal.fire({
     title: I18n.t("loss_title"),
     text: I18n.t("loss_text"),
     icon: "error",
-    confirmButtonText: "Ok"
+    confirmButtonText: I18n.t("ok")
   });
 }
 
@@ -180,7 +194,7 @@ function howto() {
   Swal.fire({
       title: I18n.t("howto_title"),
       html: I18n.t("howto_text"),
-      confirmButtonText: "Got it!"
+      confirmButtonText: I18n.t("got_it")
   });
 }
 
@@ -188,7 +202,7 @@ function about() {
   Swal.fire({
       title: I18n.t("about_title"),
       html: I18n.t("about_text"),
-      confirmButtonText: "Ok"
+      confirmButtonText: I18n.t("ok")
   });
 }
 
@@ -199,4 +213,8 @@ function settings() {
   } else {
     settings.style.display = "none";
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
