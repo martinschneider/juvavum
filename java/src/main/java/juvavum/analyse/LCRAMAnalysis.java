@@ -1,10 +1,12 @@
 package juvavum.analyse;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import juvavum.util.Timer;
 
 /** @author Martin Schneider, mart.schneider@gmail.com */
-public class LCRAMAnalysis {
+public class LCRAMAnalysis implements Analysis {
 
   private int[] gValues;
   private int h;
@@ -40,7 +42,7 @@ public class LCRAMAnalysis {
       return gValues[n];
     } else {
       Vector<Integer> values = new Vector<Integer>();
-      for (int i = 0; i <= n/2; i++) {
+      for (int i = 0; i <= n / 2; i++) {
         int tmp = grundy(i) ^ grundy(n - 2 - i);
         values.add(tmp);
       }
@@ -92,5 +94,10 @@ public class LCRAMAnalysis {
 
   private String getGameName() {
     return "CRAM[" + h + "x" + w + "]";
+  }
+
+  @Override
+  public Map<Long, Set<Long>> winningMoves() {
+    return null;
   }
 }

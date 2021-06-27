@@ -11,6 +11,18 @@ function key(b) {
   return key;
 }
 
+function fromKey(b, move, key) {
+  const h = b.length;
+  const w = b[0].length;
+  var b1 = JSON.parse(JSON.stringify(b));
+  for (var i = 0; i < h * w; i++) {
+    if (b1[i % w][Math.floor(i / w)] == 0) {
+      b1[i % w][Math.floor(i / w)] = move * ((key & 1 << i) != 0 ? 1 : 0);
+    }
+  }
+  return b1;
+}
+
 function countEmptyFields(b) {
   var count = 0;
   var w = b.length;

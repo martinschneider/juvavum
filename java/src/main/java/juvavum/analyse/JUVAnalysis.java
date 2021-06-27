@@ -10,26 +10,26 @@ public class JUVAnalysis extends DJUVAnalysis {
   }
 
   @Override
-  protected Set<Position> rowMovesInRow(int j, Board b, Set<Position> children) {
+  protected Set<Board> rowMovesInRow(int j, Board b, Set<Board> children) {
     for (int i = 1; i <= b.getWidth(); i++) {
       if (b.isFree(i, j)) {
-        b.set(i, j);
-        addPosition(b, children);
-        rowMovesInRow(j, b, children);
-        b.clear(i, j);
+        Board b1 = new Board(b);
+        b1.set(i, j);
+        addBoard(b1, children);
+        rowMovesInRow(j, b1, children);
       }
     }
     return children;
   }
 
   @Override
-  protected Set<Position> columnMovesInColumn(int i, Board b, Set<Position> children) {
+  protected Set<Board> columnMovesInColumn(int i, Board b, Set<Board> children) {
     for (int j = 1; j <= b.getHeight(); j++) {
       if (b.isFree(i, j)) {
-        b.set(i, j);
-        addPosition(b, children);
-        columnMovesInColumn(i, b, children);
-        b.clear(i, j);
+        Board b1 = new Board(b);
+        b1.set(i, j);
+        addBoard(b1, children);
+        columnMovesInColumn(i, b1, children);
       }
     }
     return children;

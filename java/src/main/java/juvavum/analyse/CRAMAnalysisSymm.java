@@ -15,23 +15,24 @@ public class CRAMAnalysisSymm extends CRAMAnalysis {
     super(b, misere);
   }
 
-  protected Map<Board, Position> positionMap = new HashMap<>();;
+  protected Map<Board, Board> positionMap = new HashMap<>();
+  ;
 
   @Override
-  protected void addPosition(Board board, Set<Position> children) {
-    Position pos = findPosition(board);
+  protected void addBoard(Board board, Set<Board> children) {
+    Board pos = findBoard(board);
     if (pos != null) {
       children.add(pos);
     } else {
       Board copy = new Board(board);
-      pos = new Position(copy);
+      pos = new Board(copy);
       children.add(pos);
       positionMap.put(copy, pos);
     }
   }
 
-  protected Position findPosition(Board board) {
-    Position found = positionMap.get(board);
+  protected Board findBoard(Board board) {
+    Board found = positionMap.get(board);
     if (found == null) {
       board.flipud();
       found = positionMap.get(board);

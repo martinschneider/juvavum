@@ -36,12 +36,12 @@ public abstract class ResultsPrinter {
     }
     System.out.println("player can always win.");
     System.out.print("Number of positions");
-    System.out.println(": " + numberOfPositions());
+    System.out.println(": " + numberOfBoards());
 
     timer.stop();
     String time = timer.getElapsedTimeString();
     System.out.println("Duration: " + time);
   }
 
-  protected abstract int numberOfPositions();
+  protected abstract int numberOfBoards();
 }

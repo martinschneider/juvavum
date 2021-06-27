@@ -8,6 +8,9 @@ const DOM = 3;
 // TODO: these can be increased once we consider symmetries
 const ENDGAME_LIMITS = [12, 20, 20, 30]; // index 0: JUV, index 1: DJUV etc.
 const MIN_MAX_DEPTH = 3;
+
+const REST_URL = "http://localhost:8080"
+const NETWORK_TIMEOUT = 500 // milliseconds
 let best = null;
 
 // Game properties
@@ -33,3 +36,11 @@ let clearBoardPiece = new Audio("audio/sweep.mp3");
 // Translations
 I18n = {};
 I18n.defaultLocale = "en";
+
+const timeout = (prom, time, exception) => {
+	let timer;
+	return Promise.race([
+		prom,
+		new Promise((_r, rej) => timer = setTimeout(rej, time, exception))
+	]).finally(() => clearTimeout(timer));
+}

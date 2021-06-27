@@ -1,7 +1,14 @@
 package juvavum.analyse;
 
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Longs;
+import com.oath.halodb.HaloDB;
+import com.oath.halodb.HaloDBException;
+import com.oath.halodb.HaloDBOptions;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Map;
+import java.util.Set;
 import juvavum.graph.GraphCramAnalysis;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -20,8 +27,8 @@ public class Start {
 
   public static void main(String[] args) {
     Options options = new Options();
-    options.addOption("g", "game", true,
-        "Game type (Juvavum, Domino Juvavum, Cram), default: Juvavum");
+    options.addOption(
+        "g", "game", true, "Game type (Juvavum, Domino Juvavum, Cram), default: Juvavum");
     options.addOption("G", "graph-analysis", false, "Use graph based analysis (Cram only)");
     Option heightOption = new Option("h", "height", true, "Height of the game board");
     heightOption.setRequired(true);
@@ -33,8 +40,12 @@ public class Start {
     options.addOption("i", "isomorphisms", false, "Use graph isomorphisms");
     options.addOption("n", "normalforms", false, "Use normal forms (Juvavum only)");
     options.addOption("m", "misere", false, "Misere type game");
-    options.addOption("c", "components", false,
+    options.addOption(
+        "c",
+        "components",
+        false,
         "Break game into components and use the Grundy-Sprague theorem for sums of games");
+    options.addOption("d", "database", true, "Export winning moves to database");
 
     CommandLineParser parser = new DefaultParser();
     CommandLine cmd = null;
@@ -59,6 +70,10 @@ public class Start {
     boolean symmetries = (cmd.hasOption('s') ? true : false);
     boolean isomorphisms = (cmd.hasOption('i') ? true : false);
     boolean components = (cmd.hasOption('c') ? true : false);
+    boolean database = (cmd.hasOption('d') ? true : false);
+    String dbPath = cmd.getOptionValue('d');
+
+    Analysis analysis = null;
 
     String game = cmd.getOptionValue('g').toLowerCase().replaceAll("\\s+", "");
     if (cmd.hasOption('G') && !game.equals("cram")) {
@@ -87,33 +102,33 @@ public class Start {
         case "juv":
         case "juvavum":
           if (normalForms) {
-            new JUVAnalysisNormalForm(new Board(h, w), misere).analyse();
+            analysis = new JUVAnalysisNormalForm(new Board(h, w), misere);
           } else if (symmetries) {
-            new JUVAnalysisSymm(new Board(h, w), misere).analyse();
+            analysis = new JUVAnalysisSymm(new Board(h, w), misere);
           } else {
-            new JUVAnalysis(new Board(h, w), misere).analyse();
+            analysis = new JUVAnalysis(new Board(h, w), misere);
           }
           break;
         case "djuv":
         case "dominojuvavum":
           if (symmetries) {
-            new DJUVAnalysisSymm(new Board(h, w), misere).analyse();
+            analysis = new DJUVAnalysisSymm(new Board(h, w), misere);
           } else {
-            new DJUVAnalysis(new Board(h, w), misere).analyse();
+            analysis = new DJUVAnalysis(new Board(h, w), misere);
           }
           break;
         case "cram":
           if (!misere && !symmetries && !graphBased && (h == 1 || w == 1)) {
-            new LCRAMAnalysis(h, w).analyse();
+            analysis = new LCRAMAnalysis(h, w);
             break;
           }
           if (graphBased) {
-            new GraphCramAnalysis(new Board(h, w), misere, isomorphisms, components).analyse();
+            analysis = new GraphCramAnalysis(new Board(h, w), misere, isomorphisms, components);
           } else {
             if (symmetries) {
-              new CRAMAnalysisSymm(new Board(h, w), misere).analyse();
+              analysis = new CRAMAnalysisSymm(new Board(h, w), misere);
             } else {
-              new CRAMAnalysis(new Board(h, w), misere).analyse();
+              analysis = new CRAMAnalysis(new Board(h, w), misere);
             }
           }
           break;
@@ -122,6 +137,46 @@ public class Start {
           System.exit(1);
       }
     }
+    analysis.analyse();
+    if (database) {
+      HaloDB db = null;
+      try {
+        System.out.println("Writing results to HaloDB at " + dbPath);
+        db = HaloDB.open(dbPath, new HaloDBOptions());
+        for (Map.Entry<Long, Set<Long>> entry : analysis.winningMoves().entrySet()) {
+          byte[] value = new byte[] {};
+          for (Long succ : entry.getValue()) {
+            value = Bytes.concat(value, Longs.toByteArray(succ));
+          }
+          db.put(buildKey(game, w, h, misere, entry.getKey()), value);
+        }
+        db.close();
+      } catch (HaloDBException e) {
+        System.err.println("Error " + e.getMessage());
+      }
+    }
+  }
+
+  private static byte[] buildKey(String gameName, int w, int h, boolean misere, long position) {
+    int game = 0;
+    switch (gameName) {
+      case "juv":
+      case "juvavum":
+        game = 1;
+        break;
+      case "djuv":
+      case "dominojuvavum":
+        game = 2;
+        break;
+      case "cram":
+        game = 3;
+    }
+    return Bytes.concat(
+        new byte[] {(byte) game},
+        new byte[] {(byte) h},
+        new byte[] {(byte) w},
+        new byte[] {(byte) (misere ? 1 : 0)},
+        Longs.toByteArray(position));
   }
 
   public static void exitWithError(String message) {
@@ -129,8 +184,8 @@ public class Start {
     System.exit(1);
   }
 
-  public static void printHelp(final String applicationName, final Options options,
-      final OutputStream out) {
+  public static void printHelp(
+      final String applicationName, final Options options, final OutputStream out) {
     final PrintWriter writer = new PrintWriter(out);
     final HelpFormatter usageFormatter = new HelpFormatter();
     usageFormatter.printHelp(applicationName, options, true);

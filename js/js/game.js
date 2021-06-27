@@ -1,4 +1,4 @@
-function move() {
+async function move() {
   if (gameOver)
   {
     return;
@@ -11,21 +11,20 @@ function move() {
   if (successors.has(key(board))) {
     console.log("Player moves " + key(prevBoard) + "->" + key(board));
     prevBoard = board;
-    computerMove();
+    moves++;
+    await aiMove(board, misere, type, moves)
   }
   else {
     invalidMove();
   }
 }
 
-async function computerMove() {
+function computerMove(move) {
   var type = properties.get("type");
   var misere = properties.get("misere");
-  moves++;
-  goodMove = aiMove(board, misere, type, moves);
-  if (goodMove != null)
+  if (move != null)
   {
-    board = goodMove;
+    board = move;
   }
   else
   {

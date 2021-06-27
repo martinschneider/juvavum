@@ -10,7 +10,7 @@ public class JUVAnalysisNormalForm extends JUVAnalysis {
   }
 
   @Override
-  protected void addPosition(Board board, Set<Position> children) {
-    children.add(new Position(new Board(board).toNormalForm()));
+  protected void addBoard(Board board, Set<Board> children) {
+    children.add(new Board(new Board(board).toNormalForm()));
   }
 }

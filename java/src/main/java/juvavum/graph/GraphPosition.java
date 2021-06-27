@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import juvavum.analyse.Position;
+import juvavum.analyse.Board;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.BiconnectivityInspector;
 
-public class GraphPosition extends Position {
+public class GraphPosition extends Board {
   private List<Graph<Integer, SimpleEdge>> components = new ArrayList<>();
   private Set<GraphPosition> children = new HashSet<>();
 
   public GraphPosition(
       Graph<Integer, SimpleEdge> graph, boolean splitIntoComponents, boolean isomorphisms) {
-    super();
     if (splitIntoComponents) {
       for (Graph<Integer, SimpleEdge> component :
           new BiconnectivityInspector<Integer, SimpleEdge>(graph).getConnectedComponents()) {

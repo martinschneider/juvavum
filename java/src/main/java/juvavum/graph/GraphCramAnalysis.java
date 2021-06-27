@@ -1,9 +1,11 @@
 package juvavum.graph;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import juvavum.analyse.Analysis;
 import juvavum.analyse.Board;
 import juvavum.analyse.Game;
 import juvavum.analyse.ResultsPrinter;
@@ -12,7 +14,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleGraph;
 
 /** @author Martin Schneider, mart.schneider@gmail.com */
-public class GraphCramAnalysis extends ResultsPrinter {
+public class GraphCramAnalysis extends ResultsPrinter implements Analysis {
   private boolean isomorphisms;
   private boolean splitIntoComponents;
 
@@ -102,7 +104,12 @@ public class GraphCramAnalysis extends ResultsPrinter {
   }
 
   @Override
-  protected int numberOfPositions() {
+  protected int numberOfBoards() {
     return grundyMap.size();
+  }
+
+  @Override
+  public Map<Long, Set<Long>> winningMoves() {
+    return Collections.emptyMap();
   }
 }

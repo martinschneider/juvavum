@@ -13,52 +13,50 @@ public class CRAMAnalysis extends AbstractAnalysis {
     super(Game.CRAM, b, misere);
   }
 
-  protected Set<Position> rowMoves(Board b, Set<Position> children) {
+  protected Set<Board> rowMoves(Board b, Set<Board> children) {
     for (int j = 1; j <= b.getHeight(); j++) {
       children = rowMovesInRow(j, b, children);
     }
     return children;
   }
 
-  protected Set<Position> rowMovesInRow(int j, Board b, Set<Position> children) {
+  protected Set<Board> rowMovesInRow(int j, Board b, Set<Board> children) {
     for (int i = 1; i < b.getWidth(); i++) {
       if (b.isFree(i, j) && b.isFree(i + 1, j)) {
-        b.set(i, j);
-        b.set(i + 1, j);
-        addPosition(b, children);
-        b.clear(i, j);
-        b.clear(i + 1, j);
+        Board b1 = new Board(b);
+        b1.set(i, j);
+        b1.set(i + 1, j);
+        addBoard(b1, children);
       }
     }
     return children;
   }
 
-  protected Set<Position> columnMoves(Board b, Set<Position> children) {
+  protected Set<Board> columnMoves(Board b, Set<Board> children) {
     for (int i = 1; i <= b.getWidth(); i++) {
       columnMovesInColumn(i, b, children);
     }
     return children;
   }
 
-  protected Set<Position> columnMovesInColumn(int i, Board b, Set<Position> children) {
+  protected Set<Board> columnMovesInColumn(int i, Board b, Set<Board> children) {
     for (int j = 1; j < b.getHeight(); j++) {
       if (b.isFree(i, j) && b.isFree(i, j + 1)) {
-        b.set(i, j);
-        b.set(i, j + 1);
-        addPosition(b, children);
-        b.clear(i, j);
-        b.clear(i, j + 1);
+        Board b1 = new Board(b);
+        b1.set(i, j);
+        b1.set(i, j + 1);
+        addBoard(b1, children);
       }
     }
     return children;
   }
 
-  protected void addPosition(Board board, Set<Position> children) {
-    children.add(new Position(new Board(board)));
+  protected void addBoard(Board board, Set<Board> children) {
+    children.add(board);
   }
 
   @Override
-  public Set<Position> addChildren(Board board, Set<Position> children) {
+  public Set<Board> addChildren(Board board, Set<Board> children) {
     children = rowMoves(board, children);
     children = columnMoves(board, children);
     return children;

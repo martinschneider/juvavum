@@ -7,8 +7,8 @@ import org.jgrapht.graph.SimpleGraph;
 
 /**
  * Representation of a game board
- * 
- * The game board is represented using a boolean array to optimize for execution speed. Using a
+ *
+ * <p>The game board is represented using a boolean array to optimize for execution speed. Using a
  * {@link BitSet} has been considered but while this would reduce memory consumption it would also
  * slow down the execution and add complexity to the code.
  * (https://stackoverflow.com/questions/605226/boolean-vs-bitset-which-is-more-efficient).
@@ -22,6 +22,8 @@ public class Board {
   private int h;
 
   private int w;
+
+  public Board() {}
 
   /**
    * Create an empty board
@@ -42,8 +44,7 @@ public class Board {
   /**
    * Creates a board from a a binary representation.
    *
-   * <p>
-   * e.g: 39 --> 1*2^0 + 1*2^1 + 1*2^2 + 1*2^5--> 1 1 1 0 0 1 0 0 0.
+   * <p>e.g: 39 --> 1*2^0 + 1*2^1 + 1*2^2 + 1*2^5--> 1 1 1 0 0 1 0 0 0.
    *
    * @param binary binary representation (as decimal value)
    * @param w width
@@ -57,12 +58,6 @@ public class Board {
       board[i % w][i / w] = ((binary & 1L << i) != 0);
     }
   }
-
-  public static void main(String args[]) {
-    Board b = new Board(4, 3, 21);
-    b.output();
-  }
-
 
   public Board(Graph<Integer, SimpleEdge> graph, int h, int w) {
     this.h = h;

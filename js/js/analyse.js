@@ -126,21 +126,57 @@ function mex(children, misere, type) {
   return mex;
 }
 
+var abort = false;
+
 // returns a "good" move for the computer player or null if there is none or the game tree is still too large to analyze
-function aiMove(b, misere, type, currMov) {
-  var empty = countEmptyFields(b);
-  if (empty <= ENDGAME_LIMITS[type]) {
-    if (type == DOM && !misere) {
-      best = null;
-      max(MIN_MAX_DEPTH, b, currMov);
-      return best;
+const findBestMove = async (b, misere, type, currMov) => {
+  var url = REST_URL + "?g="+(type+1)+"&h="+b.length+"&w="+b[0].length+"&m="+(misere?1:0)+"&b="+key(b);
+  var dbMoves = JSON.parse(await fetch(url).then(function(value){
+    return value.text();
+  }));
+  if (!abort) {
+    if (dbMoves.length>0) {
+      console.log("Using winning move from database");
+      return fromKey(b, moves, dbMoves[0]);
     }
-    grundy(gValues, b, misere, type);
-    for (var child of succ(b, moves, false, type)) {
-      if (grundy(gValues, child, misere, type) == 0) {
-        return child;
+    var empty = countEmptyFields(b);
+    if (empty <= ENDGAME_LIMITS[type]) {
+      if (type == DOM && !misere) {
+        best = null;
+        max(MIN_MAX_DEPTH, b, currMov);
+        console.log("Using winning move based on min-max search");
+        return best;
+      }
+      grundy(gValues, b, misere, type);
+      for (var child of succ(b, moves, false, type)) {
+        if (grundy(gValues, child, misere, type) == 0) {
+          console.log("Using winning move from end-game analysis")
+          return child;
+        }
       }
     }
   }
   return null;
+}
+
+async function aiMove(b, misere, type, currMov)
+{
+  const timeoutError = Symbol();
+  var move = null;
+  try {
+    move = await timeout(findBestMove(b, misere, type, currMov), NETWORK_TIMEOUT, timeoutError);
+  }
+  catch(e) {
+    if (e === timeoutError) {
+      console.log("Timeout while finding AI move");
+      abort = true;
+    }
+    else
+    {
+      console.log("Error finding AI move: " + e);
+    }
+  }
+  finally {
+    return computerMove(move);
+  }
 }

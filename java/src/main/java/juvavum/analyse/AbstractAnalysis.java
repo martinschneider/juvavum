@@ -6,39 +6,31 @@ import java.util.Map;
 import java.util.Set;
 
 /** @author Martin Schneider, mart.schneider@gmail.com */
-public abstract class AbstractAnalysis extends ResultsPrinter {
+public abstract class AbstractAnalysis extends ResultsPrinter implements Analysis {
 
   protected Map<Board, Integer> grundyMap = new HashMap<>();
+  protected Map<Long, Set<Long>> winningMovesMap = new HashMap<>();
 
   public AbstractAnalysis(Game game, Board b, boolean misere) {
     super(game, b, misere);
     System.out.println("\n" + getGameName());
   }
 
-  public void setBoard(Board b) {
-    this.b = b;
-  }
-
-  public Map<Board, Integer> getGrundyMap() {
-    return grundyMap;
-  }
-
-  protected void analyse() {
+  public void analyse() {
     timer.start();
     printResults(grundy());
   }
 
   public int grundy() {
-    return grundy(new Position(b));
+    return grundy(b);
   }
 
-  protected int grundy(Position position) {
-    Board board = position.getBoard();
+  protected int grundy(Board board) {
     Integer gValue = grundyMap.get(board);
+    Set<Board> children = new HashSet<>();
     if (gValue != null) {
       return gValue;
     }
-    Set<Position> children = new HashSet<>();
     addChildren(board, children);
     if (children.isEmpty()) {
       gValue = (misere) ? 1 : 0;
@@ -47,17 +39,24 @@ public abstract class AbstractAnalysis extends ResultsPrinter {
     }
     gValue = mex(children);
     grundyMap.put(board, gValue);
+    Set<Long> winningMoves = new HashSet<>();
+    for (Board b : children) {
+      if (grundyMap.get(b) == 0) {
+        winningMoves.add(b.flatten());
+      }
+    }
+    winningMovesMap.put(board.flatten(), winningMoves);
     return gValue;
   }
 
-  public abstract Set<Position> addChildren(Board b, Set<Position> children);
+  public abstract Set<Board> addChildren(Board b, Set<Board> children);
 
-  protected int mex(Set<Position> positions) {
+  protected int mex(Set<Board> positions) {
     int i = 0;
     int mex = -1;
     while (mex == -1) {
       boolean found = false;
-      for (Position position : positions) {
+      for (Board position : positions) {
         int j = grundy(position);
         if (j == i) {
           found = true;
@@ -73,7 +72,12 @@ public abstract class AbstractAnalysis extends ResultsPrinter {
   }
 
   @Override
-  protected int numberOfPositions() {
+  protected int numberOfBoards() {
     return grundyMap.size();
+  }
+
+  @Override
+  public Map<Long, Set<Long>> winningMoves() {
+    return winningMovesMap;
   }
 }
