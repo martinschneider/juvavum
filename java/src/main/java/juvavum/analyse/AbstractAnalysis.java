@@ -16,6 +16,10 @@ public abstract class AbstractAnalysis extends ResultsPrinter implements Analysi
     System.out.println("\n" + getGameName());
   }
 
+  public void setBoard(Board b) {
+    this.b = b;
+  }
+
   public void analyse() {
     timer.start();
     printResults(grundy());
@@ -79,5 +83,9 @@ public abstract class AbstractAnalysis extends ResultsPrinter implements Analysi
   @Override
   public Map<Long, Set<Long>> winningMoves() {
     return winningMovesMap;
+  }
+
+  public Map<Board, Integer> getGrundyMap() {
+    return grundyMap;
   }
 }

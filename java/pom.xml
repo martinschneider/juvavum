@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.martinschneider</groupId>
 	<artifactId>juvavum</artifactId>
-	<version>20.04.18</version>
+	<version>21.09.08</version>
 	<name>Juvavum</name>
 	<developers>
 		<developer>
@@ -25,9 +25,8 @@
 	</distributionManagement>
 	<repositories>
 		<repository>
-			<id>yahoo-bintray</id>
-			<name>yahoo-bintray</name>
-			<url>https://yahoo.bintray.com/maven</url>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 	<properties>
@@ -35,7 +34,7 @@
 		<java.version>1.7</java.version>
 		<commons.cli.version>1.4</commons.cli.version>
 		<jgrapht.version>1.4.0</jgrapht.version>
-		<halo.db.version>0.5.3</halo.db.version>
+		<halo.db.version>v0.5.6</halo.db.version>
 		<slf4j.version>1.7.31</slf4j.version>
 		<maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
 		<maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
@@ -55,8 +54,8 @@
 			<version>${jgrapht.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.oath.halodb</groupId>
-			<artifactId>halodb</artifactId>
+			<groupId>com.github.yahoo</groupId>
+			<artifactId>HaloDB</artifactId>
 			<version>${halo.db.version}</version>
 		</dependency>
 		<dependency>
