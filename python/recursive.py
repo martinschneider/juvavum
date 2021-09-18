@@ -7,21 +7,23 @@ from copy import deepcopy
 # Usage: python recursive.py width height
 
 def tilings(b, children):
-    children.add(key(b))
-    for j in range (0, len(b[0])):
-        for i in range(0, len(b)-1):
-            if not b[i][j] and not b[i+1][j]:
-                b1 = deepcopy(b)
-                b1[i][j] = True
-                b1[i+1][j] = True
-                children.update(tilings(b1, children))
-    for i in range(0, len(b)):
-        for j in range(0, len(b[0])-1):
-            if not b[i][j] and not b[i][j+1]:
-                b1 = deepcopy(b)
-                b1[i][j] = True
-                b1[i][j+1] = True
-                children.update(tilings(b1, children))
+    l = len(children);
+    children.add(key(b));
+    if l != len(children):
+        for j in range (0, len(b[0])):
+            for i in range(0, len(b)-1):
+                if not b[i][j] and not b[i+1][j]:
+                    b1 = deepcopy(b)
+                    b1[i][j] = True
+                    b1[i+1][j] = True
+                    children.update(tilings(b1, children))
+        for i in range(0, len(b)):
+            for j in range(0, len(b[0])-1):
+                if not b[i][j] and not b[i][j+1]:
+                    b1 = deepcopy(b)
+                    b1[i][j] = True
+                    b1[i][j+1] = True
+                    children.update(tilings(b1, children))
     return children
     
 def key(b):
@@ -29,8 +31,7 @@ def key(b):
     w = len(b)
     h = len(b[0])
     for i in range(0, w*h):
-        if b[i%w][i//w]:
-            key += (1 << i)
+        key += b[i%w][i//w] << i
     return key
 
 def main():
