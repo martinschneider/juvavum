@@ -22,6 +22,7 @@ import java.util.TreeSet;
  *   <li>renamed to BlissGraph
  *   <li>fixed some generics related issues
  *   <li>removed reporter
+ *   <li>fixed Javadoc warnings
  * </ul>
  *
  * @author Tommi Junttila
@@ -276,8 +277,8 @@ public class BlissGraph<V extends Comparable<V>> implements Comparable<BlissGrap
 
   /**
    * Find (a generating set for) the automorphism group of the graph. If the argument reporter is
-   * non-null, then a generating set of automorphisms is reported by calling its {@link
-   * Reporter#report} method for each generator.
+   * non-null, then a generating set of automorphisms is reported by calling its report method for
+   * each generator.
    *
    * @param reporter An object implementing the Reporter interface
    * @param reporter_param The parameter passed to the Reporter object
@@ -311,8 +312,8 @@ public class BlissGraph<V extends Comparable<V>> implements Comparable<BlissGrap
 
   /**
    * Find the canonical labeling and the automorphism group of the graph. If the argument reporter
-   * is non-null, then a generating set of automorphisms is reported by calling its {@link
-   * Reporter#report} method for each generator.
+   * is non-null, then a generating set of automorphisms is reported by calling its report method
+   * for each generator.
    *
    * @return A canonical labeling permutation
    */
@@ -322,8 +323,8 @@ public class BlissGraph<V extends Comparable<V>> implements Comparable<BlissGrap
 
   /**
    * Find the canonical labeling and the automorphism group of the graph. If the argument reporter
-   * is non-null, then a generating set of automorphisms is reported by calling its {@link
-   * Reporter#report} method for each generator.
+   * is non-null, then a generating set of automorphisms is reported by calling its report method
+   * for each generator.
    *
    * @param reporter An object implementing the Reporter interface
    * @param reporter_param The parameter passed to the Reporter object
@@ -366,6 +367,7 @@ public class BlissGraph<V extends Comparable<V>> implements Comparable<BlissGrap
    * new vertex.
    *
    * @param labeling the labeling to apply
+   * @param <W> vertex type
    * @return the relabeled graph
    */
   public <W extends Comparable<W>> BlissGraph<W> relabel(Map<V, W> labeling) {

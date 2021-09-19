@@ -44,7 +44,7 @@ public class Board {
   /**
    * Creates a board from a a binary representation.
    *
-   * <p>e.g: 39 --> 1*2^0 + 1*2^1 + 1*2^2 + 1*2^5--> 1 1 1 0 0 1 0 0 0.
+   * <p>e.g.: For 39 (1 1 1 0 0 1 0 0 0), the representation becomes 1*2^0 + 1*2^1 + 1*2^2 + 1*2^5
    *
    * @param binary binary representation (as decimal value)
    * @param w width
@@ -100,7 +100,7 @@ public class Board {
   }
 
   /**
-   * z.B.: 1 1 1 0 0 0 0 0 1 --> 1*2^0 + 1*2^1 + 1*2^2 + 1*2^8 = 263.
+   * e.g.: 1 1 1 0 0 0 0 0 1 will become 1*2^0 + 1*2^1 + 1*2^2 + 1*2^8 = 263.
    *
    * @return binary representation of the board
    */
@@ -220,7 +220,7 @@ public class Board {
     }
   }
 
-  /** Convert the board into a normal form (simple Juvavum only) */
+  /** @return the board converted into normal form (simple Juvavum only) */
   public Board toNormalForm() {
     int z[], s[], bz[], bs[];
     z = new int[h];
@@ -296,7 +296,7 @@ public class Board {
     }
   }
 
-  /** flip board vertically */
+  /** @return vertically flipped board */
   public Board fliplr() {
     int dy = board.length;
     int dx = board[0].length;
@@ -311,7 +311,7 @@ public class Board {
     return this;
   }
 
-  /** flip board horizontally */
+  /** @return horizontally flipped board */
   public Board flipud() {
     int dy = board.length;
     int dx = board[0].length;
@@ -326,14 +326,14 @@ public class Board {
     return this;
   }
 
-  /** rotate board by 180 degrees */
+  /** @return board rotated by 180 degrees */
   public Board rotate180() {
     flipud();
     fliplr();
     return this;
   }
 
-  /** rotate board by 270 degrees (clockwise) */
+  /** @return board rotated by 270 degrees (clockwise) */
   public Board rotate270() {
     boolean[][] help = new boolean[w][h];
     for (int i = 1; i <= h; i++) {
@@ -345,7 +345,7 @@ public class Board {
     return this;
   }
 
-  /** rotate board by 90 degrees (clockwise) */
+  /** @return board rotated by 90 degrees (clockwise) */
   public Board rotate90() {
     boolean[][] help = new boolean[w][h];
     for (int i = 1; i <= h; i++) {
@@ -357,7 +357,7 @@ public class Board {
     return this;
   }
 
-  /** flip diagonally (primary diagonal) */
+  /** @return diagonally flipped board (primary diagonal) */
   public Board flipd1() {
     boolean help;
     for (int i = 1; i < board.length; i++) {
@@ -370,7 +370,7 @@ public class Board {
     return this;
   }
 
-  /** flip diagonally (secondary diagonal) */
+  /** @return diagonally flipped board (secondary diagonal) */
   public Board flipd2() {
     boolean help;
     for (int i = 0; i < board.length; i++) {

@@ -1,1 +1,4 @@
+java/src/main/native/juvavum_graph_BlissGraph.o
+java/src/main/native/juvavum_graph_BlissGraph.h 
+java/src/main/native/bliss-0.50.zip
 bolt.db

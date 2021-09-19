@@ -75,7 +75,12 @@ public class Start {
 
     Analysis analysis = null;
 
-    String game = cmd.getOptionValue('g').toLowerCase().replaceAll("\\s+", "");
+    String game;
+    if (!cmd.hasOption('g')) {
+      game = "juvavum";
+    } else {
+      game = cmd.getOptionValue('g').toLowerCase().replaceAll("\\s+", "");
+    }
     if (cmd.hasOption('G') && !game.equals("cram")) {
       exitWithError("Graph analysis is only available for game type Cram (-g cram)");
     }
@@ -97,45 +102,43 @@ public class Start {
           "Symmetries can not be considered for graph-based analysis. Use isomorphisms (-i) and/or components (-c) instead.");
     }
 
-    if (cmd.hasOption('g')) {
-      switch (game) {
-        case "juv":
-        case "juvavum":
-          if (normalForms) {
-            analysis = new JUVAnalysisNormalForm(new Board(h, w), misere);
-          } else if (symmetries) {
-            analysis = new JUVAnalysisSymm(new Board(h, w), misere);
-          } else {
-            analysis = new JUVAnalysis(new Board(h, w), misere);
-          }
+    switch (game) {
+      case "juv":
+      case "juvavum":
+        if (normalForms) {
+          analysis = new JUVAnalysisNormalForm(new Board(h, w), misere);
+        } else if (symmetries) {
+          analysis = new JUVAnalysisSymm(new Board(h, w), misere);
+        } else {
+          analysis = new JUVAnalysis(new Board(h, w), misere);
+        }
+        break;
+      case "djuv":
+      case "dominojuvavum":
+        if (symmetries) {
+          analysis = new DJUVAnalysisSymm(new Board(h, w), misere);
+        } else {
+          analysis = new DJUVAnalysis(new Board(h, w), misere);
+        }
+        break;
+      case "cram":
+        if (!misere && !symmetries && !graphBased && (h == 1 || w == 1)) {
+          analysis = new LCRAMAnalysis(h, w);
           break;
-        case "djuv":
-        case "dominojuvavum":
+        }
+        if (graphBased) {
+          analysis = new GraphCramAnalysis(new Board(h, w), misere, isomorphisms, components);
+        } else {
           if (symmetries) {
-            analysis = new DJUVAnalysisSymm(new Board(h, w), misere);
+            analysis = new CRAMAnalysisSymm(new Board(h, w), misere);
           } else {
-            analysis = new DJUVAnalysis(new Board(h, w), misere);
+            analysis = new CRAMAnalysis(new Board(h, w), misere);
           }
-          break;
-        case "cram":
-          if (!misere && !symmetries && !graphBased && (h == 1 || w == 1)) {
-            analysis = new LCRAMAnalysis(h, w);
-            break;
-          }
-          if (graphBased) {
-            analysis = new GraphCramAnalysis(new Board(h, w), misere, isomorphisms, components);
-          } else {
-            if (symmetries) {
-              analysis = new CRAMAnalysisSymm(new Board(h, w), misere);
-            } else {
-              analysis = new CRAMAnalysis(new Board(h, w), misere);
-            }
-          }
-          break;
-        default:
-          System.out.println("Unknown game type: " + cmd.getOptionValue('g'));
-          System.exit(1);
-      }
+        }
+        break;
+      default:
+        System.out.println("Unknown game type: " + cmd.getOptionValue('g'));
+        System.exit(1);
     }
     analysis.analyse();
     if (database) {

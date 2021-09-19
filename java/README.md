@@ -40,14 +40,14 @@ This will generate juvavum.jar and the native jbliss-library (e.g. libjbliss.jni
 
 e.g. `java -jar juvavum.jar -h 3 -w 3 -g CRAM -s`
 
-The `-G` option requires `jbliss`. You need to set `java.library.path` accordingly, e.g. `java -jar -Djava.library.path=. juvavum.jar -h 3 -w 3 -g cram -G -i -c`
+The `-i` option requires `jbliss`. Copy the `jbliss` library (`libjbliss.so` on Linux) from `target/classes` to your `java.library.path` or specify it like this: `java -jar -Djava.library.path=target target/juvavum.jar -h 3 -w 3 -g cram -G -i -c`
 
 This project uses bliss and its java wrapper jbliss: [http://www.tcs.tkk.fi/Software/bliss/index.html](http://www.tcs.tkk.fi/Software/bliss/index.html).
 
 # Requirements
 This program requires Java 7 or higher.
 
-The `Makefile` for jbliss has been updated for Java 9 (using `javac -h` instead of `javah`) but can be modified to support older versions: replace `javac -h . ../java/juvavum/bliss/BlissGraph.java` with `javah -jni -d $(WRAPPER_DIR) $(CLASSPATHOPT) juvavum.bliss.BlissGraph` in `src/main/native/Makefile`.
+The `Makefile` for jbliss has been updated for Java 9 (using `javac -h` instead of `javah`) but can be modified to support older versions.
 
 # Results
 I am collecting results in this [Google Sheet](https://docs.google.com/spreadsheets/d/1QFaqaRN4wdvPGEEx9gDphZzy8yk3d-RP9WAN8shMqsU/edit?usp=sharing).
