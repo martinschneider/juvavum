@@ -1,5 +1,9 @@
-positions: positions.c
+all: array.c bitset.c uthash.h
+	gcc -o array array.c
+	gcc -o bitset bitset.c
+
+uthash.h:
 	wget https://raw.githubusercontent.com/troydhanson/uthash/master/src/uthash.h
-	gcc -o positions positions.c
+
 clean:
-	rm positions uthash.h
+	rm -f array bitset uthash.h

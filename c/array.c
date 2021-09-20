@@ -13,22 +13,22 @@ struct board {
   UT_hash_handle hh;
 };
 
-int key(int h, int w, bool b[h][w]) {
-  int key = 0;
+long long key(int h, int w, bool b[h][w]) {
+  long long key = 0;
   for (int i = 0; i < w * h; i++) {
     key += b[i % h][i / h] << i;
   }
   return key;
 }
 
-struct board *tilings(int h, int w, bool b[][w], struct board *positions) {
+struct board *positions(int h, int w, bool b[][w], struct board *map) {
   int bin_key = key(h, w, b);
   struct board *s;
-  HASH_FIND_INT(positions, & bin_key, s);
-  if (s == NULL) { // new position
+  HASH_FIND_INT(map, &bin_key, s);
+  if (s == NULL) {
     s = malloc(sizeof(struct board));
     s -> key = bin_key;
-    HASH_ADD_INT(positions, key, s);
+    HASH_ADD_INT(map, key, s);
     for (int j = 0; j < w; j++) {
       for (int i = 0; i < h - 1; i++) {
         if (!b[i][j] && !b[i + 1][j]) {
@@ -36,7 +36,7 @@ struct board *tilings(int h, int w, bool b[][w], struct board *positions) {
           memcpy(&b1[0][0], &b[0][0], h * w * sizeof(bool));
           b1[i][j] = 1;
           b1[i + 1][j] = 1;
-          positions = tilings(h, w, b1, positions);
+          map = positions(h, w, b1, map);
         }
       }
     }
@@ -48,11 +48,11 @@ struct board *tilings(int h, int w, bool b[][w], struct board *positions) {
         memcpy(&b1[0][0], &b[0][0], h * w * sizeof(bool));
         b1[i][j] = 1;
         b1[i][j + 1] = 1;
-        positions = tilings(h, w, b1, positions);
+        map = positions(h, w, b1, map);
       }
     }
   }
-  return positions;
+  return map;
 }
 
 int main(int argc, char *argv[]) {
@@ -62,14 +62,14 @@ int main(int argc, char *argv[]) {
   }
   int h = atoi(argv[1]);
   int w = atoi(argv[2]);
-
-  // initialize empty board
+  if (h * w >= 8 * sizeof(long long)) {
+    printf("Board is too large\n");
+    return 1;
+  }
   bool b[h][w];
   memset(b, 0, h * w * sizeof(bool));
-
-  // store all possible positions in a hash table
-  struct board *positions = NULL;
-  positions = tilings(h, w, b, positions);
-  printf("%u\n", HASH_COUNT(positions));
+  struct board *map = NULL;
+  map = positions(h, w, b, map);
+  printf("%u\n", HASH_COUNT(map));
   return 0;
 }
