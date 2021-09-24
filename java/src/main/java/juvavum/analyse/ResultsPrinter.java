@@ -19,7 +19,7 @@ public abstract class ResultsPrinter {
 
   protected String getGameName() {
     String gameName = game.name();
-    gameName += "[" + b.getHeight() + "x" + b.getWidth();
+    gameName += "[" + b.h + "x" + b.w;
     if (misere) {
       gameName = gameName + ", misere";
     }

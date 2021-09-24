@@ -19,7 +19,7 @@ public class GraphCramAnalysis extends ResultsPrinter implements Analysis {
   private boolean splitIntoComponents;
 
   private Graph<Integer, SimpleEdge> graph;
-  private Map<Graph<Integer, SimpleEdge>, Integer> grundyMap = new HashMap<>();
+  public Map<Graph<Integer, SimpleEdge>, Integer> grundyMap = new HashMap<>();
 
   public GraphCramAnalysis(
       Board b, boolean misere, boolean isomorphisms, boolean splitIntoComponents) {
@@ -44,7 +44,7 @@ public class GraphCramAnalysis extends ResultsPrinter implements Analysis {
     this(new Board(h, w), misere, isomorphisms, splitIntoComponents);
   }
 
-  private int grundy() {
+  public int grundy() {
     return grundy(new GraphPosition(this.graph, splitIntoComponents, isomorphisms));
   }
 

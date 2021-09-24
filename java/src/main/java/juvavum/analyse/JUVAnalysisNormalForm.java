@@ -11,6 +11,6 @@ public class JUVAnalysisNormalForm extends JUVAnalysis {
 
   @Override
   protected void addBoard(Board board, Set<Board> children) {
-    children.add(new Board(new Board(board).toNormalForm()));
+    children.add(new Board(board).normalize());
   }
 }

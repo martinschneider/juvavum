@@ -11,7 +11,7 @@ public class JUVAnalysis extends DJUVAnalysis {
 
   @Override
   protected Set<Board> rowMovesInRow(int j, Board b, Set<Board> children) {
-    for (int i = 1; i <= b.getWidth(); i++) {
+    for (int i = 0; i < b.w; i++) {
       if (b.isFree(i, j)) {
         Board b1 = new Board(b);
         b1.set(i, j);
@@ -24,7 +24,7 @@ public class JUVAnalysis extends DJUVAnalysis {
 
   @Override
   protected Set<Board> columnMovesInColumn(int i, Board b, Set<Board> children) {
-    for (int j = 1; j <= b.getHeight(); j++) {
+    for (int j = 0; j < b.h; j++) {
       if (b.isFree(i, j)) {
         Board b1 = new Board(b);
         b1.set(i, j);

@@ -46,10 +46,10 @@ public abstract class AbstractAnalysis extends ResultsPrinter implements Analysi
     Set<Long> winningMoves = new HashSet<>();
     for (Board b : children) {
       if (grundyMap.get(b) == 0) {
-        winningMoves.add(b.flatten());
+        winningMoves.add(b.val);
       }
     }
-    winningMovesMap.put(board.flatten(), winningMoves);
+    winningMovesMap.put(board.val, winningMoves);
     return gValue;
   }
 

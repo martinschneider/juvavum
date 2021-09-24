@@ -1,5 +1,5 @@
 ifndef JAVA_HOME
-	$(error JAVA_HOME not set)
+$(error JAVA_HOME not set)
 endif
 JNI_INCLUDES = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -I$(JAVA_HOME)/include/darwin -I$(JAVA_HOME)/include/windows
 
@@ -54,7 +54,7 @@ juvavum_graph_BlissGraph.cc:
 juvavum_graph_BlissGraph.h:
 	javac -h . ../java/juvavum/graph/BlissGraph.java
 
-lib: $(BLISS_DIR) $(BLISS_OBJS) juvavum_graph_BlissGraph.h 
+lib: $(BLISS_DIR) $(BLISS_OBJS) juvavum_graph_BlissGraph.h juvavum_graph_BlissGraph.cc 
 	$(CC) $(CC_FLAGS) $(JNI_INCLUDES) -I./$(BLISS_DIR) -c -o juvavum_graph_BlissGraph.o juvavum_graph_BlissGraph.cc
 	$(CC) $(CC_FLAGS) $(JNI_INCLUDES) -I./$(BLISS_DIR) -shared -o ../../../target/$(JNI_LIB_NAME) $(BLISS_OBJS) ./juvavum_graph_BlissGraph.o
 	

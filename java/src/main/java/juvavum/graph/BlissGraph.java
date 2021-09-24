@@ -54,7 +54,7 @@ public class BlissGraph<V extends Comparable<V>> implements Comparable<BlissGrap
     public TreeSet<Vertex> edges;
 
     protected void init(V identity, int c) {
-      assert c > 0;
+      assert c >= 0;
       id = identity;
       color = c;
       edges = new TreeSet<Vertex>();
@@ -65,7 +65,7 @@ public class BlissGraph<V extends Comparable<V>> implements Comparable<BlissGrap
     }
 
     public Vertex(V identity, int c) {
-      assert c > 0;
+      assert c >= 0;
       init(identity, c);
     }
 

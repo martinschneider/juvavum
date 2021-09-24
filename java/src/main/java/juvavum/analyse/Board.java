@@ -1,383 +1,229 @@
 package juvavum.analyse;
 
-import java.util.BitSet;
 import juvavum.graph.SimpleEdge;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 
 /**
- * Representation of a game board
+ * Representation of a board as a bitset.
  *
- * <p>The game board is represented using a boolean array to optimize for execution speed. Using a
- * {@link BitSet} has been considered but while this would reduce memory consumption it would also
- * slow down the execution and add complexity to the code.
- * (https://stackoverflow.com/questions/605226/boolean-vs-bitset-which-is-more-efficient).
+ * <p>The value of a board is stored in a long. Each bit is set if the field is filled and 0 if
+ * empty. This supports boards with up to 63 fields.
  *
  * @author Martin Schneider, mart.schneider@gmail.com
  */
 public class Board {
 
-  private boolean[][] board;
+  long val;
 
-  private int h;
+  int h;
 
-  private int w;
+  int w;
 
   public Board() {}
 
-  /**
-   * Create an empty board
-   *
-   * @param w width
-   * @param h height
-   */
   public Board(int h, int w) {
     if (h * w > 63) {
-      throw new IllegalArgumentException("Boards may not have more than 63 fields.");
+      throw new IllegalArgumentException("Boards cannot have more than 63 fields.");
     }
-    this.board = new boolean[w][h];
     this.h = h;
     this.w = w;
-    empty();
   }
 
-  /**
-   * Creates a board from a a binary representation.
-   *
-   * <p>e.g.: For 39 (1 1 1 0 0 1 0 0 0), the representation becomes 1*2^0 + 1*2^1 + 1*2^2 + 1*2^5
-   *
-   * @param binary binary representation (as decimal value)
-   * @param w width
-   * @param h height
-   */
-  public Board(int h, int w, long binary) {
+  Board(int h, int w, long val) {
     this.h = h;
     this.w = w;
-    this.board = new boolean[w][h];
-    for (int i = 0; i < h * w; i++) {
-      board[i % w][i / w] = ((binary & 1L << i) != 0);
-    }
+    this.val = val;
   }
 
-  public Board(Graph<Integer, SimpleEdge> graph, int h, int w) {
-    this.h = h;
-    this.w = w;
-    int x = 0;
-    int y = 0;
-    this.board = new boolean[w][h];
-    fill();
-    int j = 0;
-    for (int i = 0; i < h * w; i++) {
-      x = j / w;
-      y = j % w;
-      if (graph.containsEdge(i, i + 1)) {
-        board[y][x] = false;
-        board[y + 1][x] = false;
-      }
-      if (graph.containsEdge(i, i + w)) {
-        board[y][x] = false;
-        board[y][x + 1] = false;
-      }
-      j++;
-    }
-  }
-
-  /** @param b existing Board */
   public Board(Board b) {
-    w = b.getWidth();
-    h = b.getHeight();
-    board = new boolean[w][h];
-    for (int i = 1; i <= w; i++) {
-      for (int j = 1; j <= h; j++) {
-        board[i - 1][j - 1] = b.board[i - 1][j - 1];
-      }
-    }
+    this.h = b.h;
+    this.w = b.w;
+    this.val = b.val;
   }
 
-  /** Prints board to the console. X ... field set - ... field empty */
-  public void output() {
-    System.out.println(toString());
+  private int get(long val, int x, int y) {
+    return (int) (val >> (y * w + x) & 1);
   }
 
-  /**
-   * e.g.: 1 1 1 0 0 0 0 0 1 will become 1*2^0 + 1*2^1 + 1*2^2 + 1*2^8 = 263.
-   *
-   * @return binary representation of the board
-   */
-  public long flatten() {
-    long value = 0;
-    for (int i = 0; i < w * h; i++) {
-      if (board[i % w][i / w]) {
-        value += (1L << i);
-      }
-    }
-    return value;
+  private int get(int x, int y) {
+    return get(val, x, y);
   }
 
-  /**
-   * @param x horizontal coordinate
-   * @param y vertical coordinate
-   * @return true, if (x,y) is filled false, if free
-   */
-  public boolean isSet(int x, int y) {
-    boolean ret = false;
-    try {
-      ret = board[x - 1][y - 1];
-    } catch (ArrayIndexOutOfBoundsException e) {
-      return true;
-    }
-    return ret;
+  private long set(long val, int y, int x, long newVal) {
+    long mask = 1L << (y * w + x);
+    return (val & ~mask) | ((newVal << (y * w + x)) & mask);
   }
 
-  /**
-   * @param x horizontal coordinate
-   * @param y vertical coordinate
-   * @return true, if (x,y) is free false, if filled
-   */
+  public void set(int y, int x, long newVal) {
+    val = set(val, y, x, newVal);
+  }
+
   public boolean isFree(int x, int y) {
-    return !isSet(x, y);
+    return get(x, y) == 0;
   }
 
-  /**
-   * Set the field (x,y).
-   *
-   * @param x horizontal component
-   * @param y vertical component
-   */
-  public void set(int x, int y) {
-    board[x - 1][y - 1] = true;
+  public boolean isSet(int x, int y) {
+    return get(x, y) == 1;
   }
 
-  /**
-   * Empty the field (x,y).
-   *
-   * @param x horizontal component
-   * @param y vertical component
-   */
-  public void clear(int x, int y) {
-    board[x - 1][y - 1] = false;
+  public Board set(int x, int y) {
+    val |= 1L << y * w + x;
+    return this;
   }
 
-  /**
-   * Set the field (x,y) and convert to normal form.
-   *
-   * @param x horizontal component
-   * @param y vertical component
-   */
-  public void set2(int x, int y) {
-    board[x - 1][y - 1] = true;
-    toNormalForm();
+  public Board putShape(long shape, int x, int y) {
+    val |= shape << y * w + x;
+    return this;
   }
 
-  /**
-   * Empty the field (x,y) and convert to normal form.
-   *
-   * @param x horizontal component
-   * @param y vertical component
-   */
-  public void clear2(int x, int y) {
-    board[x - 1][y - 1] = false;
-    toNormalForm();
+  public Board clear(int x, int y) {
+    val &= ~(1L << y * w + x);
+    return this;
   }
 
-  /** @return width */
-  public int getWidth() {
-    return w;
+  public void swap(int x1, int y1, int x2, int y2) {
+    swap(y1 * w + x1, y2 * w + x2);
   }
 
-  /** @return height */
-  public int getHeight() {
-    return h;
+  private void swap(int p1, int p2) {
+    long xor = ((val >> p1) ^ (val >> p2)) & 1;
+    val ^= ((xor << p1) | (xor << p2));
   }
 
-  /** @return true, if the board is empty */
+  void fill() {
+    val = (long) Math.pow(2, h * w) - 1;
+  }
+
   public boolean isEmpty() {
-    for (int i = 1; i <= w; i++) {
-      for (int j = 1; j <= h; j++) {
-        if (isSet(i, j)) {
-          return false;
-        }
-      }
-    }
-    return true;
+    return val == 0;
   }
 
-  /** initialize the board (all fields are empty) */
-  public void empty() {
-    for (int i = 0; i < board.length; i++) {
-      for (int j = 0; j < board[i].length; j++) {
-        board[i][j] = false;
-      }
-    }
-  }
-
-  /** initialize the board (all fields are empty) */
-  public void fill() {
-    for (int i = 0; i < board.length; i++) {
-      for (int j = 0; j < board[i].length; j++) {
-        board[i][j] = true;
-      }
-    }
-  }
-
-  /** @return the board converted into normal form (simple Juvavum only) */
-  public Board toNormalForm() {
-    int z[], s[], bz[], bs[];
-    z = new int[h];
-    s = new int[w];
-    bz = new int[h];
-    bs = new int[w];
-    for (int i = 1; i <= h; i++) {
-      z[i - 1] = 0;
-      bz[i - 1] = 0;
-      for (int j = 1; j <= w; j++) {
-        if (isFree(j, i)) {
-          z[i - 1]++;
-        } else {
-          bz[i - 1] += (1 << (j - 1));
-        }
-      }
-    }
-    for (int j = 1; j <= w; j++) {
-      s[j - 1] = 0;
-      bs[j - 1] = 0;
-      for (int i = 1; i <= h; i++) {
-        if (isFree(j, i)) {
-          s[j - 1]++;
-        } else {
-          bs[j - 1] += (1 << (i - 1));
-        }
-      }
-    }
-    sortRows(z, bz);
-    sortColumns(s, bs);
+  /** @return the board converted to normal form (Juvavum only) */
+  public Board normalize() {
+    sortRows(rowCounts());
+    sortColumns(colCounts());
     return this;
   }
 
-  /** sort rows by number of filled fields */
-  private void sortRows(int[] z, int[] bz) {
-    int tausch = 0;
-    boolean help = false;
-    int n = z.length;
+  int[] rowCounts() {
+    int rows[] = new int[h];
+    for (int j = 0; j < h; j++) {
+      for (int i = 0; i < w; i++) {
+        if (get(i, j) == 0) {
+          rows[j]++;
+        }
+      }
+    }
+    return rows;
+  }
+
+  int[] colCounts() {
+    int cols[] = new int[w];
+    for (int i = 0; i < w; i++) {
+      for (int j = 0; j < h; j++) {
+        if (get(i, j) == 0) {
+          cols[i]++;
+        }
+      }
+    }
+    return cols;
+  }
+
+  private void sortRows(int[] row) {
+    int help = 0;
+    int n = row.length;
     for (int i = 0; i < n - 1; i++) {
       for (int j = n - 1; j > i; j--) {
-        if (z[j - 1] > z[j]) {
-          tausch = z[j - 1];
-          z[j - 1] = z[j];
-          z[j] = tausch;
+        if (row[j - 1] > row[j]) {
+          help = row[j - 1];
+          row[j - 1] = row[j];
+          row[j] = help;
           for (int k = 0; k < w; k++) {
-            help = board[k][j - 1];
-            board[k][j - 1] = board[k][j];
-            board[k][j] = help;
+            swap(k, j - 1, k, j);
           }
         }
       }
     }
   }
 
-  /** sort columns by number of filled fields */
-  private void sortColumns(int[] s, int[] bs) {
-    int tausch = 0;
-    boolean help = false;
-    int n = s.length;
+  /** sort columns by number of empty fields */
+  private void sortColumns(int[] col) {
+    int help = 0;
+    int n = col.length;
     for (int i = 0; i < n - 1; i++) {
       for (int j = n - 1; j > i; j--) {
-        if (s[j - 1] > s[j]) {
-          tausch = s[j - 1];
-          s[j - 1] = s[j];
-          s[j] = tausch;
+        if (col[j - 1] > col[j]) {
+          help = col[j - 1];
+          col[j - 1] = col[j];
+          col[j] = help;
           for (int k = 0; k < h; k++) {
-            help = board[j - 1][k];
-            board[j - 1][k] = board[j][k];
-            board[j][k] = help;
+            swap(j - 1, k, j, k);
           }
         }
       }
     }
   }
 
-  /** @return vertically flipped board */
   public Board fliplr() {
-    int dy = board.length;
-    int dx = board[0].length;
-    boolean help;
-    for (int xi = 0; xi < dx; xi++) {
-      for (int yi = 0; yi < dy / 2; yi++) {
-        help = board[yi][xi];
-        board[yi][xi] = board[dy - 1 - yi][xi];
-        board[dy - 1 - yi][xi] = help;
+    for (int j = 0; j < h; j++) {
+      for (int i = 0; i < w / 2; i++) {
+        swap(i, j, w - 1 - i, j);
       }
     }
     return this;
   }
 
-  /** @return horizontally flipped board */
   public Board flipud() {
-    int dy = board.length;
-    int dx = board[0].length;
-    boolean help;
-    for (int xi = 0; xi < dx / 2; xi++) {
-      for (int yi = 0; yi < dy; yi++) {
-        help = board[yi][xi];
-        board[yi][xi] = board[yi][dx - 1 - xi];
-        board[yi][dx - 1 - xi] = help;
+    for (int j = 0; j < h / 2; j++) {
+      for (int i = 0; i < w; i++) {
+        swap(i, j, i, h - 1 - j);
       }
     }
     return this;
   }
 
-  /** @return board rotated by 180 degrees */
   public Board rotate180() {
     flipud();
     fliplr();
     return this;
   }
 
-  /** @return board rotated by 270 degrees (clockwise) */
   public Board rotate270() {
-    boolean[][] help = new boolean[w][h];
-    for (int i = 1; i <= h; i++) {
-      for (int j = 1; j <= w; j++) {
-        help[j - 1][w - i] = isSet(i, j);
+    long tmp = 0;
+    for (int j = 0; j < h; j++) {
+      for (int i = 0; i < w; i++) {
+        tmp = set(tmp, w - i - 1, j, get(i, j));
       }
     }
-    board = help;
+    val = tmp;
     return this;
   }
 
-  /** @return board rotated by 90 degrees (clockwise) */
   public Board rotate90() {
-    boolean[][] help = new boolean[w][h];
-    for (int i = 1; i <= h; i++) {
-      for (int j = 1; j <= w; j++) {
-        help[h - j][i - 1] = isSet(i, j);
+    long tmp = 0;
+    for (int j = 0; j < h; j++) {
+      for (int i = 0; i < w; i++) {
+        tmp = set(tmp, i, h - j - 1, get(i, j));
       }
     }
-    board = help;
+    val = tmp;
     return this;
   }
 
-  /** @return diagonally flipped board (primary diagonal) */
   public Board flipd1() {
-    boolean help;
-    for (int i = 1; i < board.length; i++) {
+    for (int i = 1; i < h; i++) {
       for (int j = 0; j < i; j++) {
-        help = board[i][j];
-        board[i][j] = board[j][i];
-        board[j][i] = help;
+        swap(i, j, j, i);
       }
     }
     return this;
   }
 
-  /** @return diagonally flipped board (secondary diagonal) */
   public Board flipd2() {
-    boolean help;
-    for (int i = 0; i < board.length; i++) {
+    for (int i = 0; i < h; i++) {
       for (int j = 0; j < w - 1 - i; j++) {
-        help = board[i][j];
-        board[i][j] = board[h - 1 - j][w - 1 - i];
-        board[h - 1 - j][w - 1 - i] = help;
+        swap(i, j, h - 1 - j, w - 1 - i);
       }
     }
     return this;
@@ -388,44 +234,45 @@ public class Board {
     int length = h * w;
     int x, y;
     for (int i = 0; i < length; i++) {
-      x = i / w + 1;
-      y = i % w + 1;
-      if (isFree(y, x) && isFree(y, x + 1)) {
-        graph.addVertex(i);
-        graph.addVertex(i + w);
-        graph.addEdge(i, i + w);
-      }
-      if (isFree(y, x) && isFree(y + 1, x)) {
+      x = i / w;
+      y = i % w;
+      if (i % w != w - 1 && isFree(y, x) && isFree(y + 1, x)) {
         graph.addVertex(i);
         graph.addVertex(i + 1);
         graph.addEdge(i, i + 1);
+      }
+      if (i < w * (h - 1) && isFree(y, x) && isFree(y, x + 1)) {
+        graph.addVertex(i);
+        graph.addVertex(i + w);
+        graph.addEdge(i, i + w);
       }
     }
     return graph;
   }
 
-  /** @return string representation */
   @Override
   public String toString() {
     String ret = "";
-    for (int i = 0; i < board[0].length; i++) {
-      for (int j = 0; j < board.length; j++) {
-        if (board[j][i] == true) {
-          ret += ("X ");
-        } else {
-          ret += ("- ");
-        }
+    for (int i = 0; i < h * w; i++) {
+      if (((val >> i) & 1) == 1) {
+        ret += ("X ");
+      } else {
+        ret += ("- ");
       }
-      ret += "\n";
+      if (i % w == w - 1) {
+        ret += "\n";
+      }
     }
     return ret;
   }
 
-  // hash code and equals are optimized for speed, so we only include the binary representation (and
-  // ignore height and width because we do not usually compare different-sized boards)
+  // hash code and equals are optimized for speed, so we only include the binary
+  // representation (and
+  // ignore height and width because we do not usually compare different-sized
+  // boards)
   @Override
   public int hashCode() {
-    return Long.valueOf(flatten()).hashCode();
+    return Long.valueOf(val).hashCode();
   }
 
   @Override
@@ -440,6 +287,6 @@ public class Board {
       return false;
     }
     Board other = (Board) obj;
-    return other.flatten() == this.flatten();
+    return other.val == val;
   }
 }

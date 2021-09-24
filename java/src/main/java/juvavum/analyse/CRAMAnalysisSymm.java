@@ -16,7 +16,6 @@ public class CRAMAnalysisSymm extends CRAMAnalysis {
   }
 
   protected Map<Board, Board> positionMap = new HashMap<>();
-  ;
 
   @Override
   protected void addBoard(Board board, Set<Board> children) {
@@ -48,7 +47,7 @@ public class CRAMAnalysisSymm extends CRAMAnalysis {
       found = positionMap.get(board);
       board.rotate180();
     }
-    if (b.getHeight() == b.getWidth()) {
+    if (b.h == b.w) {
       if (found == null) {
         board.rotate90();
         found = positionMap.get(board);
