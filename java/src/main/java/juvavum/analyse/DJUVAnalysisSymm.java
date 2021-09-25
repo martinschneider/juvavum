@@ -16,9 +16,9 @@ public class DJUVAnalysisSymm extends CRAMAnalysisSymm {
   @Override
   protected Set<Board> rowMovesInRow(int j, Board b, Set<Board> children) {
     for (int i = 0; i < b.w - 1; i++) {
-      if (b.isFree(i, j) && b.isFree(i + 1, j)) {
+      if (b.isFree(i, j, H_DOMINO)) {
         Board b1 = new Board(b);
-        b1.putShape(H_DOMINO, i, j);
+        b1.placeShape(i, j, H_DOMINO);
         addBoard(b1, children);
         rowMovesInRow(j, b1, children);
       }
@@ -29,9 +29,9 @@ public class DJUVAnalysisSymm extends CRAMAnalysisSymm {
   @Override
   protected Set<Board> columnMovesInColumn(int i, Board b, Set<Board> children) {
     for (int j = 0; j < b.h - 1; j++) {
-      if (b.isFree(i, j) && b.isFree(i, j + 1)) {
+      if (b.isFree(i, j, V_DOMINO)) {
         Board b1 = new Board(b);
-        b1.putShape(1L | 1 << b.w, i, j);
+        b1.placeShape(i, j, V_DOMINO);
         addBoard(b1, children);
         columnMovesInColumn(i, b1, children);
       }

@@ -6,13 +6,16 @@ import java.util.Set;
 public class CRAMAnalysis extends AbstractAnalysis {
 
   public static final long H_DOMINO = 3L;
+  public static long V_DOMINO;
 
   public CRAMAnalysis(Game game, Board b, boolean misere) {
     super(game, b, misere);
+    V_DOMINO = 1L | 1 << b.w;
   }
 
   public CRAMAnalysis(Board b, boolean misere) {
     super(Game.CRAM, b, misere);
+    V_DOMINO = 1L | 1 << b.w;
   }
 
   protected Set<Board> rowMoves(Board b, Set<Board> children) {
@@ -24,9 +27,9 @@ public class CRAMAnalysis extends AbstractAnalysis {
 
   protected Set<Board> rowMovesInRow(int j, Board b, Set<Board> children) {
     for (int i = 0; i < b.w - 1; i++) {
-      if (b.isFree(i, j) && b.isFree(i + 1, j)) {
+      if (b.isFree(i, j, H_DOMINO)) {
         Board b1 = new Board(b);
-        b1.putShape(H_DOMINO, i, j);
+        b1.placeShape(i, j, H_DOMINO);
         addBoard(b1, children);
       }
     }
@@ -44,7 +47,7 @@ public class CRAMAnalysis extends AbstractAnalysis {
     for (int j = 0; j < b.h - 1; j++) {
       if (b.isFree(i, j) && b.isFree(i, j + 1)) {
         Board b1 = new Board(b);
-        b1.putShape(1L | 1 << b.w, i, j);
+        b1.placeShape(i, j, V_DOMINO);
         addBoard(b1, children);
       }
     }

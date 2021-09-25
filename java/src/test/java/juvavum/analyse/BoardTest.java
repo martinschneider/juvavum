@@ -1,6 +1,5 @@
 package juvavum.analyse;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,6 +8,7 @@ import juvavum.graph.SimpleEdge;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 import org.junit.jupiter.api.Test;
+import org.openjdk.jmh.annotations.Benchmark;
 
 public class BoardTest {
 
@@ -35,6 +35,7 @@ public class BoardTest {
   }
 
   @Test
+  @Benchmark
   public void testRotate90() {
     assertEquals(new Board(2, 2, 2), new Board(2, 2, 1).rotate90());
     assertEquals(new Board(3, 3, 4), new Board(3, 3, 1).rotate90());
@@ -146,6 +147,7 @@ public class BoardTest {
   }
 
   @Test
+  @Benchmark
   public void testRotate180() {
     assertEquals(new Board(2, 2, 5), new Board(2, 2, 10).rotate180());
     assertEquals(new Board(7, 6, 1598950637568L), new Board(7, 6, 85739706).rotate180());
@@ -250,6 +252,7 @@ public class BoardTest {
   }
 
   @Test
+  @Benchmark
   public void testRotate270() {
     assertEquals(new Board(3, 3, 145), new Board(3, 3, 28).rotate270());
     assertEquals(new Board(1, 1, 1), new Board(1, 1, 1).rotate270());
@@ -785,21 +788,6 @@ public class BoardTest {
   }
 
   @Test
-  public void testIsSet() {
-    Board b = new Board(3, 4, 1);
-    assertTrue(b.isSet(0, 0));
-    assertFalse(b.isSet(1, 0));
-  }
-
-  @Test
-  public void testClearAll() {
-    Board b = new Board(3, 4, 1);
-    assertTrue(b.isSet(0, 0));
-    b.clear(0, 0);
-    assertTrue(b.isFree(0, 0));
-  }
-
-  @Test
   public void testSet() {
     assertEquals(new Board(2, 2, 4), new Board(2, 2).set(0, 1));
     assertEquals(new Board(7, 8, 17179869184L), new Board(7, 8).set(2, 4));
@@ -901,231 +889,6 @@ public class BoardTest {
     assertEquals(new Board(1, 5, 16), new Board(1, 5).set(4, 0));
     assertEquals(new Board(4, 6, 4194304), new Board(4, 6).set(4, 3));
     assertEquals(new Board(6, 1, 16), new Board(6, 1).set(0, 4));
-  }
-
-  @Test
-  public void testIsEmpty() {
-    Board b = new Board(6, 3);
-    assertTrue(b.isEmpty());
-    b.set(0, 0);
-    assertFalse(b.isEmpty());
-  }
-
-  @Test
-  public void testFillAll() {
-    Board b = new Board(4, 5);
-    assertTrue(b.isEmpty());
-    b.fill();
-    assertFalse(b.isEmpty());
-    assertEquals(b.val, 1048575);
-  }
-
-  @Test
-  public void testRowCounts() {
-    assertArrayEquals(new int[] {2, 5, 5, 2, 5, 7, 7}, new Board(7, 7, 1583452375).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 2}, new Board(3, 2, 6).rowCounts());
-    assertArrayEquals(new int[] {5, 5, 3}, new Board(3, 7, 1372228).rowCounts());
-    assertArrayEquals(new int[] {3, 3}, new Board(2, 6, 853).rowCounts());
-    assertArrayEquals(new int[] {3, 4}, new Board(2, 6, 436).rowCounts());
-    assertArrayEquals(new int[] {2, 1, 1, 1, 1, 2, 0, 1}, new Board(8, 2, 29076).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 2, 3, 2, 2}, new Board(6, 4, 3950039).rowCounts());
-    assertArrayEquals(new int[] {4, 2, 2, 4}, new Board(4, 7, 16477908).rowCounts());
-    assertArrayEquals(new int[] {0, 0, 0, 1, 1, 0, 1}, new Board(7, 1, 39).rowCounts());
-    assertArrayEquals(new int[] {6}, new Board(1, 7, 16).rowCounts());
-    assertArrayEquals(new int[] {5, 3, 1, 5, 8, 8, 8}, new Board(7, 8, 366992453).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 2, 1, 1, 1}, new Board(6, 2, 1674).rowCounts());
-    assertArrayEquals(new int[] {2, 5, 3, 5, 8}, new Board(5, 8, 452117723).rowCounts());
-    assertArrayEquals(new int[] {5}, new Board(1, 7, 40).rowCounts());
-    assertArrayEquals(new int[] {4, 3, 1, 4, 5, 6, 6}, new Board(7, 6, 143111945).rowCounts());
-    assertArrayEquals(new int[] {5, 2, 3, 4, 8}, new Board(5, 8, 665300944).rowCounts());
-    assertArrayEquals(new int[] {0, 0}, new Board(2, 1, 3).rowCounts());
-    assertArrayEquals(new int[] {5, 5, 5, 4, 6, 7}, new Board(6, 7, 742724116).rowCounts());
-    assertArrayEquals(new int[] {4, 6, 6, 4, 5, 7, 7}, new Board(7, 7, 1495539747).rowCounts());
-    assertArrayEquals(new int[] {3, 6, 3}, new Board(3, 8, 11968627).rowCounts());
-    assertArrayEquals(new int[] {0, 3, 3, 2}, new Board(4, 4, 49439).rowCounts());
-    assertArrayEquals(new int[] {5}, new Board(1, 8, 146).rowCounts());
-    assertArrayEquals(new int[] {4, 3}, new Board(2, 6, 482).rowCounts());
-    assertArrayEquals(new int[] {2, 4, 2, 2}, new Board(4, 5, 749717).rowCounts());
-    assertArrayEquals(new int[] {4, 4}, new Board(2, 7, 4946).rowCounts());
-    assertArrayEquals(new int[] {4, 5, 6, 2, 3, 6}, new Board(6, 6, 844890629).rowCounts());
-    assertArrayEquals(new int[] {1, 0, 1, 1, 1, 0, 1}, new Board(7, 1, 34).rowCounts());
-    assertArrayEquals(new int[] {1, 0, 1, 0}, new Board(4, 1, 10).rowCounts());
-    assertArrayEquals(new int[] {4, 6, 5, 5, 8, 8, 8}, new Board(7, 8, 1162414506).rowCounts());
-    assertArrayEquals(new int[] {0, 1, 1, 1, 1}, new Board(5, 1, 1).rowCounts());
-    assertArrayEquals(new int[] {5, 3, 4, 7, 8, 8}, new Board(6, 8, 549874481).rowCounts());
-    assertArrayEquals(new int[] {3, 4}, new Board(2, 5, 536).rowCounts());
-    assertArrayEquals(new int[] {2, 3, 3}, new Board(3, 4, 2118).rowCounts());
-    assertArrayEquals(new int[] {5, 3, 5, 4, 3, 5, 6}, new Board(7, 6, 1196033376).rowCounts());
-    assertArrayEquals(new int[] {4, 5}, new Board(2, 8, 49636).rowCounts());
-    assertArrayEquals(new int[] {5, 5, 3, 4, 8}, new Board(5, 8, 1454279722).rowCounts());
-    assertArrayEquals(new int[] {2, 2, 4, 2}, new Board(4, 5, 822108).rowCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).rowCounts());
-    assertArrayEquals(new int[] {0, 1, 1, 1, 0, 1, 0, 1}, new Board(8, 1, 81).rowCounts());
-    assertArrayEquals(new int[] {3, 3, 3}, new Board(3, 5, 9322).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 1, 1, 0, 1}, new Board(7, 1, 32).rowCounts());
-    assertArrayEquals(new int[] {1, 2, 4, 3, 3}, new Board(5, 5, 5554910).rowCounts());
-    assertArrayEquals(new int[] {3, 1}, new Board(2, 3, 40).rowCounts());
-    assertArrayEquals(new int[] {2, 2, 3, 3, 6, 7}, new Board(6, 7, 659151838).rowCounts());
-    assertArrayEquals(new int[] {3, 3, 2}, new Board(3, 6, 210282).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 2, 0, 1}, new Board(6, 2, 2854).rowCounts());
-    assertArrayEquals(new int[] {3, 1, 2, 2, 2, 2, 1, 3}, new Board(8, 4, 460101332).rowCounts());
-    assertArrayEquals(new int[] {3, 0, 0, 0, 1, 2, 1, 1}, new Board(8, 3, 11419640).rowCounts());
-    assertArrayEquals(new int[] {3, 4, 1, 3, 5, 7, 7, 7}, new Board(8, 7, 932693775).rowCounts());
-    assertArrayEquals(new int[] {2, 4, 1, 3}, new Board(4, 5, 683164).rowCounts());
-    assertArrayEquals(new int[] {1}, new Board(1, 5, 30).rowCounts());
-    assertArrayEquals(new int[] {4, 6, 1, 5, 8, 8, 8}, new Board(7, 8, 1643856244).rowCounts());
-    assertArrayEquals(new int[] {3, 1, 4, 2, 2}, new Board(5, 5, 11897332).rowCounts());
-    assertArrayEquals(new int[] {2, 4}, new Board(2, 5, 534).rowCounts());
-    assertArrayEquals(new int[] {4, 5, 4}, new Board(3, 8, 7521000).rowCounts());
-    assertArrayEquals(new int[] {5, 3, 3, 2}, new Board(4, 7, 242166465).rowCounts());
-    assertArrayEquals(new int[] {2, 4, 5}, new Board(3, 6, 5661).rowCounts());
-    assertArrayEquals(new int[] {0, 2, 1, 2, 1, 1, 1, 2}, new Board(8, 3, 10171223).rowCounts());
-    assertArrayEquals(new int[] {0, 3, 2, 2, 2, 2}, new Board(6, 4, 13280655).rowCounts());
-    assertArrayEquals(new int[] {2, 1, 1, 1, 1, 0, 0, 1}, new Board(8, 2, 32360).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 0, 2, 3, 3}, new Board(6, 5, 815234939).rowCounts());
-    assertArrayEquals(new int[] {5, 2, 3}, new Board(3, 7, 449417).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 2, 1, 1, 1, 1, 1}, new Board(8, 2, 26953).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 0, 1, 0, 1}, new Board(6, 1, 20).rowCounts());
-    assertArrayEquals(new int[] {3, 3}, new Board(2, 5, 777).rowCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).rowCounts());
-    assertArrayEquals(new int[] {0, 1, 3, 3, 1, 2}, new Board(6, 3, 151607).rowCounts());
-    assertArrayEquals(new int[] {3, 1, 5, 4}, new Board(4, 6, 12595110).rowCounts());
-    assertArrayEquals(new int[] {3, 0, 4}, new Board(3, 6, 53212).rowCounts());
-    assertArrayEquals(new int[] {4, 3, 2, 3, 2, 6}, new Board(6, 6, 395760344).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 2, 3, 3}, new Board(6, 4, 4480493).rowCounts());
-    assertArrayEquals(new int[] {2, 2, 2, 3, 2, 2}, new Board(6, 4, 6915525).rowCounts());
-    assertArrayEquals(new int[] {3}, new Board(1, 5, 6).rowCounts());
-    assertArrayEquals(new int[] {0, 1, 2, 1, 2}, new Board(5, 2, 71).rowCounts());
-    assertArrayEquals(new int[] {2, 1, 2, 1, 1}, new Board(5, 3, 14937).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 2, 0}, new Board(4, 5, 1023741).rowCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 0}, new Board(3, 1, 4).rowCounts());
-    assertArrayEquals(new int[] {3, 2, 2, 3}, new Board(4, 5, 349798).rowCounts());
-    assertArrayEquals(new int[] {2, 5, 2, 2, 6, 7, 7, 7}, new Board(8, 7, 666608175).rowCounts());
-    assertArrayEquals(new int[] {3, 4, 3, 2}, new Board(4, 7, 231183687).rowCounts());
-    assertArrayEquals(new int[] {2, 2}, new Board(2, 6, 3445).rowCounts());
-    assertArrayEquals(new int[] {3, 2}, new Board(2, 4, 152).rowCounts());
-    assertArrayEquals(new int[] {2, 2, 2, 2, 1, 2}, new Board(6, 4, 13093577).rowCounts());
-    assertArrayEquals(new int[] {3, 3, 1, 3, 1, 4, 2, 1}, new Board(8, 4, 2047679873).rowCounts());
-    assertArrayEquals(new int[] {1, 2, 3, 3, 2, 2, 1, 2}, new Board(8, 4, 1835436235).rowCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).rowCounts());
-    assertArrayEquals(new int[] {4, 5, 5, 4, 6}, new Board(5, 7, 561007683).rowCounts());
-    assertArrayEquals(new int[] {1, 0, 0}, new Board(3, 1, 6).rowCounts());
-    assertArrayEquals(new int[] {4, 3, 3, 5, 8, 8}, new Board(6, 8, 198621605).rowCounts());
-    assertArrayEquals(new int[] {0, 1, 0}, new Board(3, 1, 5).rowCounts());
-    assertArrayEquals(new int[] {4, 4, 1, 3, 5, 7, 7}, new Board(7, 7, 1457494628).rowCounts());
-    assertArrayEquals(new int[] {4}, new Board(1, 7, 28).rowCounts());
-    assertArrayEquals(new int[] {3, 1}, new Board(2, 5, 492).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 2, 2, 2}, new Board(5, 2, 6).rowCounts());
-    assertArrayEquals(new int[] {2}, new Board(1, 7, 121).rowCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 1, 1, 0, 1}, new Board(7, 1, 32).rowCounts());
-    assertArrayEquals(new int[] {3, 4, 3, 3, 5, 7}, new Board(6, 7, 1725129962).rowCounts());
-    assertArrayEquals(new int[] {3, 1, 6, 2, 6, 7, 7}, new Board(7, 7, 766000058).rowCounts());
-    assertArrayEquals(new int[] {5, 5, 4, 3, 8, 8}, new Board(6, 8, 2031862882).rowCounts());
-  }
-
-  @Test
-  public void testColCounts() {
-    assertArrayEquals(new int[] {7}, new Board(8, 1, 4).colCounts());
-    assertArrayEquals(new int[] {0, 1, 0, 1}, new Board(1, 4, 5).colCounts());
-    assertArrayEquals(new int[] {0, 2, 2, 1, 2, 2, 0}, new Board(3, 7, 1272297).colCounts());
-    assertArrayEquals(new int[] {1, 3, 5, 4, 4, 4}, new Board(6, 6, 1849996513).colCounts());
-    assertArrayEquals(new int[] {1, 0, 1, 0}, new Board(1, 4, 10).colCounts());
-    assertArrayEquals(new int[] {5}, new Board(7, 1, 5).colCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 0}, new Board(2, 4, 203).colCounts());
-    assertArrayEquals(new int[] {2, 1, 0, 2}, new Board(3, 4, 1150).colCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 0}, new Board(2, 4, 233).colCounts());
-    assertArrayEquals(new int[] {2, 4}, new Board(5, 2, 89).colCounts());
-    assertArrayEquals(new int[] {1, 2, 1}, new Board(2, 3, 12).colCounts());
-    assertArrayEquals(new int[] {4}, new Board(5, 1, 4).colCounts());
-    assertArrayEquals(new int[] {2, 2, 3, 3, 5, 3, 4, 5}, new Board(5, 8, 721774346).colCounts());
-    assertArrayEquals(new int[] {1, 2, 2, 2, 3, 4, 2, 3}, new Board(4, 8, 165101838).colCounts());
-    assertArrayEquals(new int[] {2, 4, 5, 5, 3, 3, 3}, new Board(6, 7, 1582199249).colCounts());
-    assertArrayEquals(new int[] {3}, new Board(6, 1, 14).colCounts());
-    assertArrayEquals(new int[] {2, 1, 2, 0}, new Board(3, 4, 3738).colCounts());
-    assertArrayEquals(new int[] {2, 0, 1, 3, 2, 0}, new Board(4, 6, 15366583).colCounts());
-    assertArrayEquals(new int[] {2, 3}, new Board(4, 2, 19).colCounts());
-    assertArrayEquals(new int[] {1}, new Board(6, 1, 55).colCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).colCounts());
-    assertArrayEquals(new int[] {0, 0, 0, 1, 1, 1, 1}, new Board(1, 7, 7).colCounts());
-    assertArrayEquals(new int[] {2, 2}, new Board(3, 2, 36).colCounts());
-    assertArrayEquals(new int[] {2, 2, 2, 1}, new Board(2, 4, 8).colCounts());
-    assertArrayEquals(new int[] {1, 2, 3, 4, 3, 3, 1}, new Board(4, 7, 149964899).colCounts());
-    assertArrayEquals(new int[] {4, 2, 2}, new Board(6, 3, 222150).colCounts());
-    assertArrayEquals(new int[] {3, 3, 3}, new Board(6, 3, 163394).colCounts());
-    assertArrayEquals(new int[] {2, 3, 1, 2, 1, 2, 2, 2}, new Board(3, 8, 16519428).colCounts());
-    assertArrayEquals(new int[] {1, 1, 3, 2, 2, 3, 2, 2}, new Board(4, 8, 1124769777).colCounts());
-    assertArrayEquals(new int[] {1, 1, 0, 1}, new Board(1, 4, 4).colCounts());
-    assertArrayEquals(new int[] {3, 2, 2, 2, 2, 1, 0, 1}, new Board(3, 8, 14868572).colCounts());
-    assertArrayEquals(new int[] {4, 5, 5, 7, 7}, new Board(8, 5, 238818373).colCounts());
-    assertArrayEquals(new int[] {0, 3, 1, 1}, new Board(4, 4, 40407).colCounts());
-    assertArrayEquals(new int[] {5}, new Board(6, 1, 4).colCounts());
-    assertArrayEquals(new int[] {5, 5, 4, 4, 4, 4, 5, 6}, new Board(7, 8, 762576412).colCounts());
-    assertArrayEquals(new int[] {4, 3, 2, 3, 4}, new Board(6, 5, 153368829).colCounts());
-    assertArrayEquals(new int[] {5, 4, 2}, new Board(6, 3, 190848).colCounts());
-    assertArrayEquals(new int[] {0, 0, 1, 1}, new Board(1, 4, 3).colCounts());
-    assertArrayEquals(new int[] {2, 3}, new Board(6, 2, 949).colCounts());
-    assertArrayEquals(new int[] {2, 3, 2, 3, 2, 1}, new Board(3, 6, 196897).colCounts());
-    assertArrayEquals(new int[] {1, 2, 2, 3, 2, 1, 1, 1}, new Board(3, 8, 15787777).colCounts());
-    assertArrayEquals(new int[] {4, 6, 5, 7, 3, 6}, new Board(8, 6, 1350517879).colCounts());
-    assertArrayEquals(new int[] {2, 3, 4, 6, 4}, new Board(6, 5, 777520226).colCounts());
-    assertArrayEquals(new int[] {3, 6, 4, 2}, new Board(7, 4, 228492433).colCounts());
-    assertArrayEquals(new int[] {4, 1, 3, 3}, new Board(5, 4, 440838).colCounts());
-    assertArrayEquals(new int[] {4, 6, 6, 7, 6, 4}, new Board(8, 6, 1674979672).colCounts());
-    assertArrayEquals(new int[] {1, 2, 1, 1, 1, 0, 2, 2}, new Board(2, 8, 14373).colCounts());
-    assertArrayEquals(new int[] {6, 4, 4, 5, 4, 4, 5, 3}, new Board(6, 8, 8699634).colCounts());
-    assertArrayEquals(new int[] {1, 2, 1, 2, 3, 1}, new Board(3, 6, 194565).colCounts());
-    assertArrayEquals(new int[] {2, 0, 4, 3}, new Board(5, 4, 173883).colCounts());
-    assertArrayEquals(new int[] {5, 4, 5, 3, 1, 4}, new Board(6, 6, 1388570136).colCounts());
-    assertArrayEquals(new int[] {6, 6, 3, 6, 4, 5, 4, 6}, new Board(7, 8, 1299453174).colCounts());
-    assertArrayEquals(new int[] {6, 6, 6, 7, 5, 7, 7}, new Board(8, 7, 1658988720).colCounts());
-    assertArrayEquals(new int[] {5, 6, 5, 5, 4, 4, 6, 6}, new Board(7, 8, 918054169).colCounts());
-    assertArrayEquals(new int[] {2}, new Board(5, 1, 11).colCounts());
-    assertArrayEquals(new int[] {7, 4, 5, 5, 4, 4, 5, 7}, new Board(7, 8, 443704892).colCounts());
-    assertArrayEquals(new int[] {0, 0, 1, 0, 0, 1, 1, 0}, new Board(1, 8, 155).colCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).colCounts());
-    assertArrayEquals(new int[] {2, 2, 4, 3}, new Board(5, 4, 234374).colCounts());
-    assertArrayEquals(new int[] {4, 2, 3, 0, 3}, new Board(5, 5, 10774974).colCounts());
-    assertArrayEquals(new int[] {1, 0, 1, 2, 2}, new Board(3, 5, 2303).colCounts());
-    assertArrayEquals(new int[] {4, 5, 5, 4, 6, 6, 5, 6}, new Board(7, 8, 1552640773).colCounts());
-    assertArrayEquals(new int[] {1, 1}, new Board(4, 2, 252).colCounts());
-    assertArrayEquals(new int[] {2, 0, 2, 3, 2, 2, 2}, new Board(3, 7, 835910).colCounts());
-    assertArrayEquals(new int[] {2, 2, 2}, new Board(3, 3, 448).colCounts());
-    assertArrayEquals(new int[] {4, 2}, new Board(7, 2, 14572).colCounts());
-    assertArrayEquals(new int[] {0, 0, 1, 2, 0, 2, 1, 1}, new Board(2, 8, 21399).colCounts());
-    assertArrayEquals(new int[] {2, 0, 1, 2, 0, 2, 1, 1}, new Board(3, 8, 6010582).colCounts());
-    assertArrayEquals(new int[] {3, 3, 4, 3, 3, 4}, new Board(5, 6, 755609616).colCounts());
-    assertArrayEquals(new int[] {1, 1, 2, 0}, new Board(2, 4, 184).colCounts());
-    assertArrayEquals(new int[] {2, 0}, new Board(2, 2, 10).colCounts());
-    assertArrayEquals(new int[] {4, 4, 6, 4, 6, 6, 5, 6}, new Board(7, 8, 189387311).colCounts());
-    assertArrayEquals(new int[] {4, 4, 4, 5, 5, 5, 4, 6}, new Board(7, 8, 527885643).colCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).colCounts());
-    assertArrayEquals(new int[] {2, 4, 1, 1, 1, 2}, new Board(5, 6, 1035409308).colCounts());
-    assertArrayEquals(new int[] {1}, new Board(4, 1, 11).colCounts());
-    assertArrayEquals(new int[] {1, 4, 2}, new Board(4, 3, 2636).colCounts());
-    assertArrayEquals(new int[] {1, 2, 1, 1, 1, 2}, new Board(2, 6, 848).colCounts());
-    assertArrayEquals(new int[] {1}, new Board(5, 1, 27).colCounts());
-    assertArrayEquals(new int[] {1}, new Board(2, 1, 1).colCounts());
-    assertArrayEquals(new int[] {0, 1, 1}, new Board(2, 3, 43).colCounts());
-    assertArrayEquals(new int[] {0}, new Board(1, 1, 1).colCounts());
-    assertArrayEquals(new int[] {4, 2, 2, 1, 4, 1, 1, 4}, new Board(4, 8, 1282287714).colCounts());
-    assertArrayEquals(new int[] {3, 2}, new Board(4, 2, 35).colCounts());
-    assertArrayEquals(new int[] {3, 4, 3, 4, 4}, new Board(6, 5, 680724417).colCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 0, 1, 0, 1, 0}, new Board(1, 8, 168).colCounts());
-    assertArrayEquals(new int[] {0, 0, 1, 0, 0, 1, 1, 1}, new Board(1, 8, 27).colCounts());
-    assertArrayEquals(new int[] {3, 5, 3, 4}, new Board(7, 4, 48334293).colCounts());
-    assertArrayEquals(new int[] {3, 3, 4}, new Board(8, 3, 16459341).colCounts());
-    assertArrayEquals(new int[] {0, 1, 1, 2, 1, 1, 1}, new Board(3, 7, 883151).colCounts());
-    assertArrayEquals(new int[] {5, 5, 3, 6, 3}, new Board(7, 5, 1756053653).colCounts());
-    assertArrayEquals(new int[] {1}, new Board(2, 1, 2).colCounts());
-    assertArrayEquals(new int[] {0, 1, 1, 0}, new Board(1, 4, 9).colCounts());
-    assertArrayEquals(new int[] {6, 5, 7, 8, 6, 6}, new Board(8, 6, 806105268).colCounts());
-    assertArrayEquals(new int[] {5, 4, 6, 4, 3, 6}, new Board(8, 6, 2120976087).colCounts());
-    assertArrayEquals(new int[] {0, 0, 1}, new Board(1, 3, 3).colCounts());
-    assertArrayEquals(new int[] {3, 3, 3, 3}, new Board(8, 4, 1530056445).colCounts());
-    assertArrayEquals(new int[] {3, 5, 4, 4, 3, 5, 3, 4}, new Board(5, 8, 356548697).colCounts());
-    assertArrayEquals(new int[] {1, 1, 1, 2, 2}, new Board(2, 5, 69).colCounts());
-    assertArrayEquals(new int[] {5, 4}, new Board(7, 2, 2609).colCounts());
   }
 
   @Test
@@ -1247,14 +1010,6 @@ public class BoardTest {
   }
 
   @Test
-  public void testSwap() {
-    Board b = new Board(2, 3);
-    b.set(0, 0);
-    b.swap(0, 0, 0, 1);
-    assertEquals(b.val, 8);
-  }
-
-  @Test
   public void testFill() {
     Board b = new Board(3, 7);
     int val = 0;
@@ -1263,21 +1018,6 @@ public class BoardTest {
       for (int i = 0; i < b.w; i++) {
         b.set(i, j);
         val += 1 << count++;
-        assertEquals(b.val, val);
-      }
-    }
-  }
-
-  @Test
-  public void testClear() {
-    Board b = new Board(4, 6);
-    b.fill();
-    int val = (int) Math.pow(2, b.h * b.w) - 1;
-    int count = 0;
-    for (int j = 0; j < b.h; j++) {
-      for (int i = 0; i < b.w; i++) {
-        b.clear(i, j);
-        val -= 1 << count++;
         assertEquals(b.val, val);
       }
     }

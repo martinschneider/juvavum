@@ -10,4 +10,5 @@ src/main/native/wrapper/juvavum_graph_BlissGraph.o
 src/main/native/wrapper/juvavum_bliss_BlissGraph.h
 src/main/native/wrapper/juvavum_bliss_BlissGraph_Reporter.h
 src/main/native/wrapper/juvavum_bliss_BlissGraph_Vertex.h
+src/main/native/juvavum_graph_BlissGraph.cc
 **/bliss-0.50/

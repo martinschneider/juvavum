@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.martinschneider</groupId>
   <artifactId>juvavum</artifactId>
-  <version>21.09.23</version>
+  <version>21.09.25</version>
   <name>Juvavum</name>
   <developers>
     <developer>
@@ -56,6 +58,7 @@
     <halo.db.version>v0.5.6</halo.db.version>
     <slf4j.version>1.7.31</slf4j.version>
     <junit.version>5.8.0</junit.version>
+    <jmh.version>1.33</jmh.version>
     <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
     <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
     <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
@@ -97,6 +100,16 @@
       <artifactId>junit-jupiter-params</artifactId>
       <version>${junit.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>${jmh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>${jmh.version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -154,9 +167,13 @@
             </goals>
             <configuration>
               <target>
-                <property name="native.classpath" refid="maven.compile.classpath"/>
-                <echo file="${project.build.directory}/compile-classpath" message="${native.classpath}"/>
-                <exec dir="src/main/native" executable="make" failonerror="false"/>
+                <property name="native.classpath"
+                  refid="maven.compile.classpath" />
+                <echo
+                  file="${project.build.directory}/compile-classpath"
+                  message="${native.classpath}" />
+                <exec dir="src/main/native" executable="make"
+                  failonerror="false" />
               </target>
             </configuration>
           </execution>
