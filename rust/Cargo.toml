@@ -3,4 +3,14 @@ name = "rust"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "cram"
+path = "src/cram.rs"
+
+[[bin]]
+name = "graph_cram"
+path = "src/graph_cram.rs"
+
 [dependencies]
+rustc-hash = "1.1"
+petgraph = "0.6"
