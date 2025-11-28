@@ -1,5 +1,6 @@
 package io.github.martinschneider.juvavumrest;
 
+import jakarta.servlet.http.HttpServletRequest;
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import com.oath.halodb.HaloDB;
@@ -32,6 +33,7 @@ public class PositionController implements HandlerInterceptor {
   @CrossOrigin
   @GetMapping("/")
   public ResponseEntity<List<Long>> result(
+      HttpServletRequest request,
       @RequestParam(value = "g", defaultValue = "1") int game,
       @RequestParam(value = "h") int h,
       @RequestParam(value = "w") int w,
@@ -41,7 +43,15 @@ public class PositionController implements HandlerInterceptor {
     CacheControl cacheControl =
         CacheControl.maxAge(30, TimeUnit.MINUTES).noTransform().mustRevalidate();
     List<Long> ret = parseValues(db.get(buildKey(game, h, w, misere, b)));
-    LOG.info("{} {}x{}{} {} -> {}", GAMES[game - 1], h, w, misere ? " (misere)" : "", b, ret);
+    LOG.info(
+        "{} {}x{}{} {} -> {} from {}",
+        GAMES[game - 1],
+        h,
+        w,
+        misere ? " (misere)" : "",
+        b,
+        ret,
+        request.getRemoteAddr());
     return ResponseEntity.ok().cacheControl(cacheControl).body(ret);
   }
 
