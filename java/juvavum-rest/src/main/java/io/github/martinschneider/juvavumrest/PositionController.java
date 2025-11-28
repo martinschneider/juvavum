@@ -30,7 +30,7 @@ public class PositionController implements HandlerInterceptor {
 
   @Autowired private HaloDB db;
 
-  @CrossOrigin
+  @CrossOrigin(origins = "https://juvavum.5164.at")
   @GetMapping("/")
   public ResponseEntity<List<Long>> result(
       HttpServletRequest request,
