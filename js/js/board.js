@@ -12,8 +12,8 @@ function key(b) {
 }
 
 function fromKey(b, move, key) {
-  const h = b.length;
-  const w = b[0].length;
+  const w = b.length;
+  const h = b[0].length;
   var b1 = JSON.parse(JSON.stringify(b));
   for (var i = 0; i < h * w; i++) {
     if (b1[i % w][Math.floor(i / w)] == 0) {
@@ -40,7 +40,7 @@ function confirmMove(b, move) {
   var h = b[0].length;
   for (var i = 0; i < h; i++) {
     for (var j = 0; j < w; j++) {
-      if (b[j][i] == -1)
+      if (b[j][i] == -1 || b[j][i] == -2)
       {
         b[j][i] = move;
       }

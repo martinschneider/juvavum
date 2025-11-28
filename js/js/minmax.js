@@ -10,16 +10,16 @@ function fitness(b, currMov)
 function max(depth, b, currMov) {
 	if (depth == 0)
 	{
-		return fitness(b);
+		return fitness(b, currMov);
 	}
 	var value = -100;
 	var successors = succ(b, currMov, false, DOM);
-	if (successors.length == 0)
+	if (successors.size == 0)
 	{
 		return value + 1;
 	}
 	for (var b1 of successors) {
-		var newValue = min(depth - 1, b1);
+		var newValue = min(depth - 1, b1, currMov + 1);
 		if (newValue > value) {
 			value = newValue;
 			if (depth == MIN_MAX_DEPTH)
@@ -34,16 +34,16 @@ function max(depth, b, currMov) {
 function min(depth, b, currMov) {
 	if (depth == 0)
 	{
-		return fitness(b);
+		return fitness(b, currMov);
 	}
 	var value = 100;
-	var successors = succ(b, currMov + 1, false, DOM);
-	if (successors.length == 0)
+	var successors = succ(b, currMov, false, DOM);
+	if (successors.size == 0)
 	{
-		return eval - 1;
+		return value - 1;
 	}
 	for (var b1 of successors) {
-		var newValue = max(depth - 1, b1);
+		var newValue = max(depth - 1, b1, currMov + 1);
 		if (newValue < value) {
 			value = newValue;
 			if (depth == MIN_MAX_DEPTH)

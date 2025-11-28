@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     };
     initTranslations();
+    loadSettings();
     start();
     playMusic();
   }
@@ -79,7 +80,7 @@ window.addEventListener("resize", ()=> {
   }
 );
 
-function start() {
+async function start() {
   updateSize();
   updateSettings();
   gameOver = false;
@@ -91,20 +92,23 @@ function start() {
   }
   w = properties.get("width");
   h = properties.get("height");
+  type = properties.get("type");
+  misere = properties.get("misere");
   var computer_first = properties.get("computer_first");
-  board = Array(h).fill(0).map(x => Array(w).fill(0));
-  prevBoard = Array(h).fill(0).map(x => Array(w).fill(0));
+  board = Array(w).fill(0).map(x => Array(h).fill(0));
+  prevBoard = Array(w).fill(0).map(x => Array(h).fill(0));
   drawBoard(board);
   if (computer_first)
   {
     moves++;
-    computerMove();
+    await aiMove(board, misere, type, moves);
   }
   document.getElementById("confirm").disabled=false;
 }
 
 function toggleMusic() {
   properties.set("music", !properties.get("music"));
+  saveSettings();
   playMusic();
 }
 
@@ -125,6 +129,25 @@ function updateSettings() {
   properties.set("music", document.getElementById("music").checked);
   properties.set("sounds", document.getElementById("sounds").checked);
   properties.set("computer_first", document.getElementById("computer_first").checked);
+  saveSettings();
+}
+
+function saveSettings() {
+  localStorage.setItem("juvavum.settings", JSON.stringify(Array.from(properties.entries())));
+}
+
+function loadSettings() {
+  const settings = localStorage.getItem("juvavum.settings");
+  if (settings) {
+    properties = new Map(JSON.parse(settings));
+    document.getElementById("width").value = properties.get("width");
+    document.getElementById("height").value = properties.get("height");
+    document.getElementById("type").value = properties.get("type");
+    document.getElementById("misere").checked = properties.get("misere");
+    document.getElementById("music").checked = properties.get("music");
+    document.getElementById("sounds").checked = properties.get("sounds");
+    document.getElementById("computer_first").checked = properties.get("computer_first");
+  }
 }
 
 function updateSize() {
@@ -141,9 +164,15 @@ function toggle(i, j) {
       if (sounds) {
         placePiece.play();
       }
-      board[i][j] = (type == JUV) ? 1 : -1;
+      if (properties.get("computer_first")) {
+        board[i][j] = (type == JUV) ? 2 : -2;
+      }
+      else
+      {
+        board[i][j] = (type == JUV) ? 1 : -1;
+      }
     }
-    else if ((board[i][j] == 1 || board[i][j] == -1) && prevBoard[i][j] == 0) {
+    else if ((board[i][j] != 0) && prevBoard[i][j] == 0) {
       if (sounds) {
         takeBackPiece.play();
       }

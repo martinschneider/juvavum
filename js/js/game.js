@@ -82,7 +82,7 @@ function drawBoard(board) {
       else
       {
         // current move
-        if (board[j][i] == -1)
+        if (board[j][i] == -1 || board[j][i] == -2)
         {
           td.setAttribute("class", "active"); 
         }

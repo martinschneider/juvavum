@@ -130,7 +130,7 @@ var abort = false;
 
 // returns a "good" move for the computer player or null if there is none or the game tree is still too large to analyze
 const findBestMove = async (b, misere, type, currMov) => {
-  var url = REST_URL + "?g="+(type+1)+"&h="+b.length+"&w="+b[0].length+"&m="+(misere?1:0)+"&b="+key(b);
+  var url = REST_URL + "?g="+(type+1)+"&h="+b[0].length+"&w="+b.length+"&m="+(misere?1:0)+"&b="+key(b);
   var dbMoves = JSON.parse(await fetch(url).then(function(value){
     return value.text();
   }));
@@ -163,6 +163,7 @@ async function aiMove(b, misere, type, currMov)
 {
   const timeoutError = Symbol();
   var move = null;
+  abort = false;
   try {
     move = await timeout(findBestMove(b, misere, type, currMov), NETWORK_TIMEOUT, timeoutError);
   }
