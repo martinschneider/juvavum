@@ -141,9 +141,15 @@ function toggle(i, j) {
       if (sounds) {
         placePiece.play();
       }
-      board[i][j] = (type == JUV) ? 1 : -1;
+      if (properties.get("computer_first")) {
+        board[i][j] = (type == JUV) ? 2 : -2;
+      }
+      else
+      {
+        board[i][j] = (type == JUV) ? 1 : -1;
+      }
     }
-    else if ((board[i][j] == 1 || board[i][j] == -1) && prevBoard[i][j] == 0) {
+    else if ((board[i][j] != 0) && prevBoard[i][j] == 0) {
       if (sounds) {
         takeBackPiece.play();
       }
