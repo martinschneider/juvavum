@@ -9,8 +9,9 @@ const DOM = 3;
 const ENDGAME_LIMITS = [12, 20, 20, 30]; // index 0: JUV, index 1: DJUV etc.
 const MIN_MAX_DEPTH = 3;
 
-const REST_URL = "http://localhost:8080"
-const NETWORK_TIMEOUT = 500 // milliseconds
+// A service running the Spring Boot app in ../../java/juvavum-rest
+const REST_URL = "https://api.5164.at"
+const NETWORK_TIMEOUT = 1000 // milliseconds
 let best = null;
 
 // Game properties

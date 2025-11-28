@@ -79,7 +79,7 @@ window.addEventListener("resize", ()=> {
   }
 );
 
-function start() {
+async function start() {
   updateSize();
   updateSettings();
   gameOver = false;
@@ -91,6 +91,8 @@ function start() {
   }
   w = properties.get("width");
   h = properties.get("height");
+  type = properties.get("type");
+  misere = properties.get("misere");
   var computer_first = properties.get("computer_first");
   board = Array(h).fill(0).map(x => Array(w).fill(0));
   prevBoard = Array(h).fill(0).map(x => Array(w).fill(0));
@@ -98,7 +100,7 @@ function start() {
   if (computer_first)
   {
     moves++;
-    computerMove();
+    await aiMove(board, misere, type, moves);
   }
   document.getElementById("confirm").disabled=false;
 }
