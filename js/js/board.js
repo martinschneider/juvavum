@@ -40,7 +40,7 @@ function confirmMove(b, move) {
   var h = b[0].length;
   for (var i = 0; i < h; i++) {
     for (var j = 0; j < w; j++) {
-      if (b[j][i] == -1)
+      if (b[j][i] == -1 || b[j][i] == -2)
       {
         b[j][i] = move;
       }
