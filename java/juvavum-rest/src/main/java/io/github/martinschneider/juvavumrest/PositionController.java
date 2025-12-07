@@ -26,7 +26,7 @@ public class PositionController implements HandlerInterceptor {
 
   private static Logger LOG = LoggerFactory.getLogger(PositionController.class);
 
-  private static final String[] GAMES = {"JUV", "DJUV", "CRAM"};
+  private static final String[] GAMES = {"JUV", "DJUV", "CRAM", "DOM"};
 
   @Autowired private HaloDB db;
 
