@@ -216,7 +216,7 @@ print:
     mov dx," "                      ; whitespace
     int 21h
     inc cx                          ; cx++
-    jmp printloop
+    jmp printLoop
 newLine:
     mov ah,02h                      ; print character
     mov dx,13                       ; cr
