@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  juvavum-rest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: juvavum-rest
+    restart: unless-stopped
+
+    ports:
+      # Map container port 443 to host port 443
+      - "443:443"
+
+    volumes:
+      # Mount certificates directory (writable to allow auto-generation)
+      - ./certs:/app/certs
+      # Mount logs directory
+      - ./logs:/app/logs
+
+    environment:
+      # Keystore password (set this via .env file or export)
+      - KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD:-changeit}
+      - KEY_ALIAS=${KEY_ALIAS:-juvavum}
+      # Optional: JVM memory settings
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+
+    # Prevent container from binding to port 80
+    networks:
+      - juvavum-network
+
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "https://localhost:443/actuator/health", "--no-check-certificate"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  juvavum-network:
+    driver: bridge

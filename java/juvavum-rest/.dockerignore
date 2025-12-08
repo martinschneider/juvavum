@@ -1,0 +1,39 @@
+# Ignore build artifacts
+target/
+*.jar
+*.war
+*.ear
+
+# Ignore IDE files
+.classpath
+.project
+.settings/
+.vscode/
+.idea/
+*.iml
+
+# Ignore git
+.git/
+.gitignore
+
+# Ignore logs and certificates
+logs/
+certs/
+*.log
+*.p12
+*.jks
+
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+.env
+.env.example
+
+# Ignore documentation
+*.md
+DOCKER-DEPLOY.md
+
+# Ignore scripts (except docker-entrypoint.sh)
+*.sh
+!docker-entrypoint.sh
